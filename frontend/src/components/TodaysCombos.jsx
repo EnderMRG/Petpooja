@@ -2,9 +2,9 @@ import { todaysCombos } from '../lib/mockData'
 
 export default function TodaysCombos() {
   return (
-    <div className="col-span-2">
+    <div>
       <h2 className="text-lg font-bold text-white mb-6">Today's Top Combos</h2>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {todaysCombos.map((combo) => (
           <div key={combo.id} className="glass-card p-6 hover-scale">
             <div className="mb-4">

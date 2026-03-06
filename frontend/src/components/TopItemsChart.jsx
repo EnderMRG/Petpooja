@@ -3,7 +3,7 @@ import { topItemsData } from '../lib/mockData'
 
 export default function TopItemsChart() {
   return (
-    <div className="glass-card p-6 col-span-2">
+    <div className="glass-card p-6">
       <h2 className="text-lg font-bold text-white mb-6">Top 10 Items by Contribution Margin</h2>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={topItemsData}>

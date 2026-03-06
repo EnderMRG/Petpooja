@@ -62,6 +62,11 @@ export const menuItems = [
   { id: 8, name: 'Butter Naan', category: 'Breads', price: 70, cost: 28, margin: 60, velocity: 'Fast', status: 'Star' },
   { id: 9, name: 'Rasgulla', category: 'Desserts', price: 120, cost: 50, margin: 58.3, velocity: 'Slow', status: 'Dog' },
   { id: 10, name: 'Shahi Tukda', category: 'Desserts', price: 150, cost: 65, margin: 56.7, velocity: 'Slow', status: 'Dog' },
+  { id: 11, name: 'Aloo Gobi', category: 'Main Course', price: 180, cost: 65, margin: 63.9, velocity: 'Fast', status: 'Star' },
+  { id: 12, name: 'Malai Kofta', category: 'Main Course', price: 280, cost: 100, margin: 64.3, velocity: 'Moderate', status: 'Hidden Star' },
+  { id: 13, name: 'Chole Bhature', category: 'North Indian', price: 200, cost: 75, margin: 62.5, velocity: 'Fast', status: 'Star' },
+  { id: 14, name: 'Gulab Jamun', category: 'Desserts', price: 100, cost: 40, margin: 60, velocity: 'Slow', status: 'Dog' },
+  { id: 15, name: 'Masala Dosa', category: 'South Indian', price: 150, cost: 60, margin: 60, velocity: 'Moderate', status: 'Plowhorse' },
 ]
 
 export const combos = [
@@ -125,6 +130,22 @@ export const orders = [
     items: ['Dal Makhani', 'Butter Naan', 'Rasgulla'],
     total: 330,
     language: 'English',
+    status: 'Completed'
+  },
+  {
+    id: 'ORD-2024-0005',
+    time: '01:15 PM',
+    items: ['Butter Chicken', 'Garlic Naan', 'Chole Bhature'],
+    total: 480,
+    language: 'Marathi',
+    status: 'Completed'
+  },
+  {
+    id: 'ORD-2024-0006',
+    time: '02:05 PM',
+    items: ['Veg Biryani', 'Raita', 'Gulab Jamun'],
+    total: 410,
+    language: 'Gujarati',
     status: 'Completed'
   },
 ]
