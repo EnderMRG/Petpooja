@@ -454,5 +454,63 @@
     "upsell_accepted": false,
     "language_detected": "Manual",
     "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-6AA7CF",
+    "timestamp": "2026-03-07T01:09:11.459562",
+    "items": [
+      {
+        "item_id": "M001",
+        "name": "Classic Veg Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 149,
+        "match_confidence": 83.33333333333334
+      },
+      {
+        "item_id": "M002",
+        "name": "Paneer Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 179,
+        "match_confidence": 84.61538461538461
+      },
+      {
+        "item_id": "M031",
+        "name": "Oreo Milkshake",
+        "qty": 1,
+        "modifiers": [],
+        "price": 159
+      }
+    ],
+    "total": 487,
+    "upsell_accepted": true,
+    "language_detected": "Hinglish",
+    "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-65F435",
+    "timestamp": "2026-03-07T01:11:26.517671",
+    "items": [
+      {
+        "item_id": "M001",
+        "name": "Classic Veg Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 149,
+        "match_confidence": 83.33333333333334
+      },
+      {
+        "item_id": "M020",
+        "name": "Loaded Nachos",
+        "qty": 1,
+        "modifiers": [],
+        "price": 179
+      }
+    ],
+    "total": 328,
+    "upsell_accepted": true,
+    "language_detected": "Hinglish",
+    "status": "confirmed"
   }
 ]

@@ -13,6 +13,34 @@ from rapidfuzz import fuzz, process
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
 ORDERS_FILE = os.path.join(DATA_DIR, "orders.json")
 
+# ─── FFmpeg path resolution (Windows WinGet / system) ─────────────────────
+import shutil, glob as _glob
+
+def _ensure_ffmpeg_in_path():
+    """Add ffmpeg to PATH if not already visible (handles WinGet installs)."""
+    if shutil.which("ffmpeg"):
+        return  # already on PATH
+
+    # Common WinGet install locations
+    search_patterns = [
+        os.path.expanduser("~/AppData/Local/Microsoft/WinGet/Packages/**/ffmpeg.exe"),
+        "C:/ProgramData/Microsoft/WinGet/Packages/**/ffmpeg.exe",
+        "C:/Program Files/ffmpeg/bin/ffmpeg.exe",
+        "C:/ffmpeg/bin/ffmpeg.exe",
+    ]
+    for pattern in search_patterns:
+        matches = _glob.glob(pattern, recursive=True)
+        if matches:
+            ffmpeg_dir = os.path.dirname(matches[0])
+            os.environ["PATH"] = ffmpeg_dir + os.pathsep + os.environ.get("PATH", "")
+            print(f"[INFO] ffmpeg found at: {ffmpeg_dir}")
+            return
+
+    print("[WARN] ffmpeg not found. Install ffmpeg and ensure it's on PATH.")
+
+
+_ensure_ffmpeg_in_path()
+
 # ─── Whisper model (lazy-loaded) ────────────────────
 _whisper_model = None
 
@@ -23,6 +51,7 @@ def _get_whisper_model():
         try:
             import whisper
             _whisper_model = whisper.load_model("base")
+            print("[INFO] Whisper 'base' model loaded successfully.")
         except Exception as e:
             print(f"[WARN] Whisper not available: {e}")
             _whisper_model = "UNAVAILABLE"
