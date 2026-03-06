@@ -436,5 +436,23 @@
     "upsell_accepted": false,
     "language_detected": "Manual",
     "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-493C8F",
+    "timestamp": "2026-03-07T00:26:37.777016",
+    "items": [
+      {
+        "item_id": "M005",
+        "name": "Spicy Aloo Tikki Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 129,
+        "match_confidence": 100
+      }
+    ],
+    "total": 129,
+    "upsell_accepted": false,
+    "language_detected": "Manual",
+    "status": "confirmed"
   }
 ]

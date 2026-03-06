@@ -3,6 +3,7 @@ export default function Sidebar({ activePage, onNavigate }) {
         { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
         { id: 'menu', label: 'Menu Intelligence', icon: 'analytics' },
         { id: 'combos', label: 'Combo Engine', icon: 'extension' },
+        { id: 'curated', label: 'Curated Menu', icon: 'auto_awesome' },
         { id: 'voice', label: 'Orders', icon: 'receipt_long' },
         { id: 'history', label: 'Order History', icon: 'history' },
         { id: 'inventory', label: 'Inventory', icon: 'inventory_2' },

@@ -1,0 +1,28 @@
+[
+  {
+    "po_number": "PO-20260307001928-ING004",
+    "ingredient_id": "ING004",
+    "ingredient_name": "Mozzarella Cheese",
+    "unit": "kg",
+    "qty_requested": 5.0,
+    "supplier": "Amul Wholesale",
+    "status": "acknowledged",
+    "sent_at": "2026-03-07T00:19:28.400539",
+    "webhook_url": "http://localhost:8001/suppliers/amul/order",
+    "supplier_response": "Order received by Amul Wholesale. Expected delivery in 1 day(s).",
+    "eta_days": 1
+  },
+  {
+    "po_number": "PO-20260307002528-ING004",
+    "ingredient_id": "ING004",
+    "ingredient_name": "Mozzarella Cheese",
+    "unit": "kg",
+    "qty_requested": 5.0,
+    "supplier": "Amul Wholesale",
+    "status": "acknowledged",
+    "sent_at": "2026-03-07T00:25:28.950417",
+    "webhook_url": "http://localhost:8001/suppliers/amul/order",
+    "supplier_response": "Order received by Amul Wholesale. Expected delivery in 1 day(s).",
+    "eta_days": 1
+  }
+]

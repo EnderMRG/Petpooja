@@ -177,8 +177,11 @@ Petpooja/
 │   │       └── Settings.jsx        # Menu management + recipe builder
 │   ├── vite.config.js
 │   └── package.json
-├── Petpooja_ML_Models.tex          # ML models LaTeX document
-├── Petpooja_ML_Models.pdf          # Compiled ML guide (PDF)
+├── docs/
+│   ├── Petpooja_ML_Models.tex      # ML models LaTeX source
+│   ├── Petpooja_ML_Models.pdf      # Compiled ML guide (PDF)
+│   ├── PROJECT_EXPLANATION.md      # Detailed project explanation
+│   └── Petpooja Track *.pdf/pptx   # Hackathon track documents
 └── README.md
 ```
 

@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
 import MenuIntelligence from './components/MenuIntelligence'
 import ComboEngine from './components/ComboEngine'
+import CuratedMenu from './components/CuratedMenu'
 import VoiceOrders from './components/VoiceOrders'
 import OrderHistory from './components/OrderHistory'
 import Settings from './components/Settings'
@@ -14,6 +15,7 @@ const PAGE_TITLES = {
   dashboard: 'Dashboard',
   menu: 'Menu Intelligence',
   combos: 'Combo Engine',
+  curated: 'Curated Menu Generator',
   voice: 'Orders',
   history: 'Order History',
   inventory: 'Inventory Manager',
@@ -85,6 +87,7 @@ export default function App() {
           {activePage === 'dashboard' && <Dashboard onNavigate={setActivePage} />}
           {activePage === 'menu' && <MenuIntelligence />}
           {activePage === 'combos' && <ComboEngine />}
+          {activePage === 'curated' && <CuratedMenu />}
           {activePage === 'voice' && <VoiceOrders />}
           {activePage === 'history' && <OrderHistory />}
           {activePage === 'inventory' && <InventoryManager />}

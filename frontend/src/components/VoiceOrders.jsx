@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 
 export default function VoiceOrders() {
     const [mode, setMode] = useState('voice') // 'voice' | 'manual'
@@ -9,7 +10,17 @@ export default function VoiceOrders() {
     const [loading, setLoading] = useState(false)
     const [processing, setProcessing] = useState(false)
     const [dragOver, setDragOver] = useState(false)
+    const [showReceipt, setShowReceipt] = useState(false)
     const fileRef = useRef(null)
+
+    // ─── Live Mic State ───
+    const [isRecording, setIsRecording] = useState(false)
+    const [micStatus, setMicStatus] = useState('idle') // 'idle' | 'requesting' | 'recording' | 'processing' | 'error'
+    const [micError, setMicError] = useState('')
+    const [recordingSeconds, setRecordingSeconds] = useState(0)
+    const mediaRecorderRef = useRef(null)
+    const audioChunksRef = useRef([])
+    const timerRef = useRef(null)
 
     // Manual order state
     const [menuItems, setMenuItems] = useState([])
@@ -29,6 +40,78 @@ export default function VoiceOrders() {
     }, [])
 
     useEffect(() => { fetchMenu() }, [fetchMenu])
+
+    // ─── Live Mic: Start Recording ───
+    const startMic = async () => {
+        setMicError('')
+        setMicStatus('requesting')
+        setTranscription('')
+        setParsedOrder(null)
+        setConfirmedOrder(null)
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+            audioChunksRef.current = []
+            const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+                ? 'audio/webm;codecs=opus'
+                : MediaRecorder.isTypeSupported('audio/webm') ? 'audio/webm' : 'audio/ogg'
+            const mr = new MediaRecorder(stream, { mimeType })
+            mediaRecorderRef.current = mr
+            mr.ondataavailable = (e) => { if (e.data.size > 0) audioChunksRef.current.push(e.data) }
+            mr.onstop = async () => {
+                stream.getTracks().forEach(t => t.stop())
+                clearInterval(timerRef.current)
+                setRecordingSeconds(0)
+                setIsRecording(false)
+                setMicStatus('processing')
+                const blob = new Blob(audioChunksRef.current, { type: mimeType })
+                const ext = mimeType.includes('ogg') ? 'ogg' : 'webm'
+                const formData = new FormData()
+                formData.append('file', blob, `recording.${ext}`)
+                try {
+                    setProcessing(true)
+                    setLoading(true)
+                    const res = await fetch('/voice/transcribe', { method: 'POST', body: formData })
+                    const data = await res.json()
+                    const text = data.transcription || data.error || ''
+                    setTranscription(text)
+                    setMicStatus('idle')
+                    if (data.transcription) await parseOrder(data.transcription)
+                } catch {
+                    setMicStatus('error')
+                    setMicError('Transcription failed. Please try again.')
+                } finally {
+                    setProcessing(false)
+                    setLoading(false)
+                }
+            }
+            mr.start(100) // collect chunks every 100ms
+            setIsRecording(true)
+            setMicStatus('recording')
+            setRecordingSeconds(0)
+            timerRef.current = setInterval(() => setRecordingSeconds(s => s + 1), 1000)
+        } catch (err) {
+            setMicStatus('error')
+            if (err.name === 'NotAllowedError') {
+                setMicError('Microphone access denied. Please allow mic access in your browser settings.')
+            } else {
+                setMicError(`Mic error: ${err.message}`)
+            }
+        }
+    }
+
+    const stopMic = () => {
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop()
+        }
+    }
+
+    // Cleanup on unmount
+    useEffect(() => () => {
+        clearInterval(timerRef.current)
+        if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
+            mediaRecorderRef.current.stop()
+        }
+    }, [])
 
     // ─── Upload & Transcribe ───
     const handleFileUpload = async (file) => {
@@ -116,6 +199,12 @@ export default function VoiceOrders() {
         setParsedOrder(null)
         setConfirmedOrder(null)
         setCart({})
+        setShowReceipt(false)
+    }
+
+    const printReceipt = () => {
+        setShowReceipt(true)
+        setTimeout(() => window.print(), 300)
     }
 
     // Cart helpers
@@ -174,18 +263,61 @@ export default function VoiceOrders() {
                             <h3 style={{ fontSize: 24, fontWeight: 700, marginBottom: 8 }}>New Voice Order</h3>
                             <p style={{ fontSize: 14, color: 'var(--text-tertiary)', marginBottom: 32 }}>Speak or upload the customer order details</p>
 
-                            {/* Mic Button */}
-                            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 32 }}>
-                                <div style={{ position: 'relative', display: 'inline-block' }}>
-                                    {processing && <div style={{ position: 'absolute', inset: 0, background: 'rgba(249, 116, 21, 0.2)', borderRadius: '50%', animation: 'mic-ring 1.5s ease-out infinite' }} />}
-                                    <button className="mic-btn" onClick={() => fileRef.current?.click()} title="Click to upload audio">
-                                        <span className="material-symbols-outlined" style={{ fontSize: 36 }}>mic</span>
+                            {/* Live Mic Button */}
+                            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: 28 }}>
+                                <div style={{ position: 'relative', display: 'inline-block', marginBottom: 12 }}>
+                                    {/* Pulse rings when recording */}
+                                    {isRecording && <>
+                                        <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', border: '2px solid rgba(239,68,68,0.5)', animation: 'mic-ring 1.5s ease-out infinite' }} />
+                                        <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', border: '2px solid rgba(239,68,68,0.3)', animation: 'mic-ring 1.5s ease-out 0.5s infinite' }} />
+                                    </>}
+                                    <button
+                                        className="mic-btn"
+                                        onClick={isRecording ? stopMic : startMic}
+                                        disabled={micStatus === 'requesting' || micStatus === 'processing'}
+                                        title={isRecording ? 'Click to stop recording' : 'Click to start recording'}
+                                        style={{
+                                            background: isRecording ? 'linear-gradient(135deg, #ef4444, #dc2626)' : undefined,
+                                            boxShadow: isRecording ? '0 0 0 4px rgba(239,68,68,0.2)' : undefined,
+                                            transform: isRecording ? 'scale(1.05)' : undefined,
+                                            transition: 'all 0.2s',
+                                        }}
+                                    >
+                                        <span className="material-symbols-outlined" style={{ fontSize: 36 }}>
+                                            {isRecording ? 'stop_circle' : micStatus === 'processing' ? 'hourglass_top' : 'mic'}
+                                        </span>
                                     </button>
                                 </div>
+
+                                {/* Status line */}
+                                {micStatus === 'idle' && !transcription && (
+                                    <p style={{ fontSize: 14, color: 'var(--text-tertiary)' }}>Click the mic and speak your order</p>
+                                )}
+                                {micStatus === 'requesting' && (
+                                    <p style={{ fontSize: 14, color: '#f59e0b', fontWeight: 600 }}>⏳ Requesting microphone access...</p>
+                                )}
+                                {micStatus === 'recording' && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4 }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                            <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#ef4444', animation: 'mic-ring 1s ease-out infinite', display: 'inline-block' }} />
+                                            <span style={{ fontSize: 15, fontWeight: 700, color: '#ef4444' }}>Recording… {recordingSeconds}s</span>
+                                        </div>
+                                        <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>Speak your order clearly, then click stop</p>
+                                    </div>
+                                )}
+                                {micStatus === 'processing' && (
+                                    <p style={{ fontSize: 14, color: 'var(--primary)', fontWeight: 600 }}>🔄 Transcribing audio with Whisper AI…</p>
+                                )}
+                                {micStatus === 'error' && micError && (
+                                    <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: '10px 16px', maxWidth: 380, textAlign: 'left' }}>
+                                        <p style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, margin: 0 }}>⚠ {micError}</p>
+                                        <button onClick={() => setMicStatus('idle')} style={{ fontSize: 12, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 4, textDecoration: 'underline' }}>Dismiss</button>
+                                    </div>
+                                )}
                             </div>
 
-                            {/* Upload Zone */}
-                            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 32 }}>
+                            {/* Upload Zone (secondary) */}
+                            <div style={{ borderTop: '1px solid var(--border-subtle)', paddingTop: 20 }}>
                                 <div className={`upload-zone ${dragOver ? 'drag-over' : ''}`}
                                     onDragOver={e => { e.preventDefault(); setDragOver(true) }}
                                     onDragLeave={() => setDragOver(false)}
@@ -194,8 +326,8 @@ export default function VoiceOrders() {
                                     <input ref={fileRef} type="file" accept="audio/*" style={{ display: 'none' }}
                                         onChange={e => handleFileUpload(e.target.files?.[0])} />
                                     <span className="material-symbols-outlined" style={{ color: 'var(--text-tertiary)', marginBottom: 8, display: 'block' }}>upload_file</span>
-                                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Or upload audio file</p>
-                                    <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>Drag and drop recording here or click to browse</p>
+                                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Or upload an audio file</p>
+                                    <p style={{ fontSize: 12, color: 'var(--text-tertiary)', marginTop: 4 }}>Drag & drop or click to browse (.mp3, .wav, .webm, .ogg)</p>
                                 </div>
                             </div>
 
@@ -579,12 +711,92 @@ export default function VoiceOrders() {
                             </div>
                         )}
 
-                        <button className="btn-outline" onClick={reset} style={{ width: '100%' }}>
-                            ↩ Start New Order
-                        </button>
+                        <div style={{ display: 'flex', gap: 10 }}>
+                            <button className="btn-primary" onClick={printReceipt}
+                                style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, background: '#0f172a' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 18 }}>receipt</span>
+                                Print Receipt
+                            </button>
+                            <button className="btn-outline" onClick={reset} style={{ flex: 1 }}>
+                                ↩ New Order
+                            </button>
+                        </div>
                     </div>
                 )}
             </div>
+
+            {/* ── Receipt Print Modal ── */}
+            {showReceipt && confirmedOrder && createPortal(
+                <>
+                    <style>{`
+                        @media print {
+                            body > *:not(#receipt-portal) { display: none !important; }
+                            #receipt-portal { display: block !important; }
+                            #receipt-close-btn { display: none !important; }
+                            @page { size: 80mm auto; margin: 0; }
+                        }
+                        #receipt-portal {
+                            position: fixed; inset: 0; background: rgba(15,23,42,0.7);
+                            display: flex; align-items: center; justify-content: center; z-index: 99999;
+                        }
+                        .receipt-paper {
+                            background: white; width: 300px; padding: 20px 16px;
+                            font-family: 'Courier New', monospace; font-size: 12px;
+                            color: #000; box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+                        }
+                        .receipt-dashed { border-top: 1px dashed #000; margin: 8px 0; }
+                        .receipt-center { text-align: center; }
+                        .receipt-row { display: flex; justify-content: space-between; padding: 2px 0; }
+                        .receipt-bold { font-weight: bold; }
+                        .receipt-big { font-size: 15px; font-weight: bold; }
+                    `}</style>
+                    <div id="receipt-portal">
+                        <div className="receipt-paper">
+                            <div className="receipt-center receipt-bold receipt-big">PETPOOJA COPILOT</div>
+                            <div className="receipt-center" style={{ fontSize: 10, marginBottom: 4 }}>AI-Powered Restaurant POS</div>
+                            <div className="receipt-center" style={{ fontSize: 10 }}>Tel: +91-98001-00001</div>
+                            <div className="receipt-dashed" />
+                            <div className="receipt-row"><span>Order#</span><span>{confirmedOrder.order.order_id?.slice(-8)}</span></div>
+                            <div className="receipt-row"><span>Date</span><span>{new Date().toLocaleDateString('en-IN')}</span></div>
+                            <div className="receipt-row"><span>Time</span><span>{new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</span></div>
+                            <div className="receipt-row"><span>Cashier</span><span>AI Copilot</span></div>
+                            <div className="receipt-dashed" />
+                            <div className="receipt-bold" style={{ marginBottom: 4 }}>ITEMS</div>
+                            {confirmedOrder.order.items.map((item, i) => {
+                                const qty = item.qty || 1
+                                const price = item.price * qty
+                                return (
+                                    <div key={i}>
+                                        <div>{item.name}</div>
+                                        <div className="receipt-row">
+                                            <span style={{ paddingLeft: 8 }}>{qty} x ₹{item.price}</span>
+                                            <span>₹{price}</span>
+                                        </div>
+                                    </div>
+                                )
+                            })}
+                            <div className="receipt-dashed" />
+                            <div className="receipt-row"><span>Subtotal</span><span>₹{confirmedOrder.order.total}</span></div>
+                            <div className="receipt-row"><span>GST (5%)</span><span>₹{Math.round(confirmedOrder.order.total * 0.05)}</span></div>
+                            <div className="receipt-dashed" />
+                            <div className="receipt-row receipt-bold receipt-big">
+                                <span>TOTAL</span>
+                                <span>₹{Math.round(confirmedOrder.order.total * 1.05)}</span>
+                            </div>
+                            <div className="receipt-dashed" />
+                            <div className="receipt-row"><span>Payment</span><span>Cash / UPI</span></div>
+                            <div className="receipt-dashed" />
+                            <div className="receipt-center" style={{ marginTop: 8, fontSize: 11 }}>Thank you for dining with us!</div>
+                            <div className="receipt-center" style={{ fontSize: 10, marginTop: 2 }}>Powered by Petpooja AI Copilot</div>
+                            <div style={{ height: 20 }} />
+                            <button id="receipt-close-btn" onClick={() => setShowReceipt(false)}
+                                style={{ width: '100%', padding: '10px', borderRadius: 8, border: 'none', background: '#0f172a', color: 'white', fontSize: 13, fontWeight: 700, cursor: 'pointer', fontFamily: 'inherit' }}>
+                                ✕ Close
+                            </button>
+                        </div>
+                    </div>
+                </>
+                , document.body)}
         </div>
     )
 }
