@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Petpooja Copilot - Combo Engine</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#23170f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100">
+<div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+<header class="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 px-6 py-3 sticky top-0 z-50">
+<div class="flex items-center gap-4">
+<div class="text-primary">
+<span class="material-symbols-outlined text-3xl">restaurant_menu</span>
+</div>
+<h2 class="text-lg font-bold tracking-tight">Petpooja Copilot</h2>
+</div>
+<div class="flex flex-1 justify-end gap-4 items-center">
+<div class="flex gap-2">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+<div class="h-10 w-10 rounded-full bg-primary/20 border-2 border-primary/10 overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="User profile avatar portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2xbHi3CiA6SLmegBghm7RL0wywbt0I5UDO_-zfkp5kPK8hVuE_0Yolg7KKlvNESXT_8teYRJIBJJhpSm-zleLC83HdmnMr8Wh44qGM_NCeIEkm_cKaMwNC9Lwn6_5ByFy6S8B6dHrkJmnDDXEpX9hfhtnO82Vm5F11lnl0jDUOrzrmGNl70m9ZpCDlMQki1_2r1OPQbRortrGYdS537oIBTG68aXfMOAxMwlerq8L1PPMXHY0j-dSqM9yjY1aQpXbFNcP3nk3eknl"/>
+</div>
+</div>
+</header>
+<div class="flex flex-1">
+<aside class="w-64 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 hidden md:flex flex-col p-4 gap-6">
+<div class="flex flex-col">
+<h1 class="text-base font-semibold">Petpooja</h1>
+<p class="text-slate-500 dark:text-slate-400 text-xs uppercase tracking-wider font-bold">Copilot AI</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">coffee</span>
+<span class="text-sm font-medium">Menu</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-fill">memory</span>
+<span class="text-sm font-semibold">Combo Engine</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">inventory_2</span>
+<span class="text-sm font-medium">Inventory</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-sm font-medium">Reports</span>
+</a>
+</nav>
+</aside>
+<main class="flex-1 p-6 md:p-10 max-w-6xl mx-auto w-full">
+<div class="mb-8">
+<h2 class="text-3xl font-bold tracking-tight mb-2">Smart Bundle Recommendations</h2>
+<p class="text-slate-500 dark:text-slate-400">Based on association analysis of 1,000+ orders</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<span class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Analyzed Transactions</span>
+<span class="text-2xl font-bold text-primary">847</span>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<span class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Strong Associations</span>
+<span class="text-2xl font-bold text-primary">24</span>
+</div>
+<div class="bg-white dark:bg-slate-900 p-5 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col gap-1">
+<span class="text-slate-500 text-xs font-semibold uppercase tracking-wider">Recommended Bundles</span>
+<span class="text-2xl font-bold text-primary">8</span>
+</div>
+</div>
+<div class="mb-6 flex items-center justify-between">
+<h3 class="text-lg font-bold">Top Performing Combos</h3>
+<div class="flex gap-2">
+<button class="text-sm font-medium px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">Filter</button>
+<button class="text-sm font-medium px-3 py-1.5 rounded-lg bg-white border border-slate-200 hover:bg-slate-50">Sort by: Frequency</button>
+</div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase rounded tracking-wider">Bundle #1</span>
+<div class="flex items-center gap-1">
+<span class="text-xs text-slate-500 mr-1">Margin Score</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 mb-6">
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Veg Biryani</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Raita</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Gulab Jamun</span>
+</div>
+<div class="flex flex-col gap-2 mb-6">
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Purchase frequency</span>
+<span class="font-semibold text-slate-900">65% of orders</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Avg. Order Value Uplift</span>
+<span class="font-bold text-emerald-600">+₹130 increase</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">Add to Menu</button>
+<button class="flex-1 border border-slate-200 dark:border-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm">Preview</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase rounded tracking-wider">Bundle #2</span>
+<div class="flex items-center gap-1">
+<span class="text-xs text-slate-500 mr-1">Margin Score</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-slate-200 text-sm">circle</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 mb-6">
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Veg Burger</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">French Fries</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Cold Coffee</span>
+</div>
+<div class="flex flex-col gap-2 mb-6">
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Purchase frequency</span>
+<span class="font-semibold text-slate-900">48% of orders</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Avg. Order Value Uplift</span>
+<span class="font-bold text-emerald-600">+₹95 increase</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">Add to Menu</button>
+<button class="flex-1 border border-slate-200 dark:border-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm">Preview</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase rounded tracking-wider">Bundle #3</span>
+<div class="flex items-center gap-1">
+<span class="text-xs text-slate-500 mr-1">Margin Score</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-slate-200 text-sm">circle</span>
+<span class="material-symbols-outlined text-slate-200 text-sm">circle</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 mb-6">
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Paneer Tikka</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Garlic Naan</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Mango Lassi</span>
+</div>
+<div class="flex flex-col gap-2 mb-6">
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Purchase frequency</span>
+<span class="font-semibold text-slate-900">42% of orders</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Avg. Order Value Uplift</span>
+<span class="font-bold text-emerald-600">+₹115 increase</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">Add to Menu</button>
+<button class="flex-1 border border-slate-200 dark:border-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm">Preview</button>
+</div>
+</div>
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+<div class="flex justify-between items-start mb-4">
+<span class="px-2 py-1 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase rounded tracking-wider">Bundle #4</span>
+<div class="flex items-center gap-1">
+<span class="text-xs text-slate-500 mr-1">Margin Score</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-primary text-sm">circle</span>
+<span class="material-symbols-outlined text-slate-200 text-sm">circle</span>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-2 mb-6">
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Margherita Pizza</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Garlic Bread</span>
+<span class="text-slate-400 font-bold">+</span>
+<span class="px-3 py-1.5 bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 rounded-lg font-bold text-sm">Coke</span>
+</div>
+<div class="flex flex-col gap-2 mb-6">
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Purchase frequency</span>
+<span class="font-semibold text-slate-900">55% of orders</span>
+</div>
+<div class="flex items-center justify-between text-sm">
+<span class="text-slate-600">Avg. Order Value Uplift</span>
+<span class="font-bold text-emerald-600">+₹85 increase</span>
+</div>
+</div>
+<div class="flex gap-3">
+<button class="flex-1 bg-primary text-white font-bold py-2.5 rounded-lg hover:bg-primary/90 transition-colors text-sm">Add to Menu</button>
+<button class="flex-1 border border-slate-200 dark:border-slate-700 font-bold py-2.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors text-sm">Preview</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>

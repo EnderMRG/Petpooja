@@ -1,67 +1,67 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import './index.css'
-import RevenueTable from './components/RevenueTable'
-import ComboSuggestions from './components/ComboSuggestions'
-import VoiceOrderPanel from './components/VoiceOrderPanel'
+import Sidebar from './components/Sidebar'
+import Dashboard from './components/Dashboard'
+import MenuIntelligence from './components/MenuIntelligence'
+import ComboEngine from './components/ComboEngine'
+import VoiceOrders from './components/VoiceOrders'
+import OrderHistory from './components/OrderHistory'
+import Settings from './components/Settings'
+import LandingPage from './components/LandingPage'
 
-const TABS = [
-  { id: 'revenue', label: '📊 Revenue Intelligence', icon: '📊' },
-  { id: 'voice', label: '🎙️ Voice Copilot', icon: '🎙️' },
-]
+const PAGE_TITLES = {
+  dashboard: 'Dashboard',
+  menu: 'Menu Intelligence',
+  combos: 'Combo Engine',
+  voice: 'Voice Orders',
+  history: 'Order History',
+  settings: 'Settings',
+}
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('revenue')
+  const [activePage, setActivePage] = useState('dashboard')
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [showLanding, setShowLanding] = useState(true)
+
+  const handleRefresh = useCallback(() => setRefreshKey(k => k + 1), [])
+
+  if (showLanding) {
+    return <LandingPage onEnterApp={() => setShowLanding(false)} />
+  }
 
   return (
-    <div className="min-h-screen px-4 py-6 md:px-8">
-      {/* ─── Header ─── */}
-      <header className="max-w-7xl mx-auto mb-8 animate-in">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-lg shadow-lg">
-            🍽️
-          </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold gradient-text">
-              Petpooja AI Copilot
-            </h1>
-            <p className="text-sm text-slate-400">
-              Revenue Intelligence & Voice Ordering for Restaurants
-            </p>
-          </div>
-        </div>
-      </header>
+    <>
+      <Sidebar activePage={activePage} onNavigate={setActivePage} />
 
-      {/* ─── Tab Navigation ─── */}
-      <nav className="max-w-7xl mx-auto mb-8 animate-in" style={{ animationDelay: '0.1s' }}>
-        <div className="flex gap-3">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 cursor-pointer ${activeTab === tab.id ? 'tab-active' : 'tab-inactive'
-                }`}
-            >
-              {tab.label}
+      <div className="main-content">
+        {/* Top Bar */}
+        <div className="topbar">
+          <h1>{PAGE_TITLES[activePage]}</h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <div className="live-badge">Live Demo</div>
+            <button onClick={handleRefresh} className="btn-outline btn-sm" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="material-symbols-outlined" style={{ fontSize: 16 }}>refresh</span>
+              Refresh
             </button>
-          ))}
-        </div>
-      </nav>
-
-      {/* ─── Content ─── */}
-      <main className="max-w-7xl mx-auto animate-in" style={{ animationDelay: '0.2s' }}>
-        {activeTab === 'revenue' && (
-          <div className="space-y-8">
-            <RevenueTable />
-            <ComboSuggestions />
+            <button style={{ padding: '6px', borderRadius: 8, background: 'var(--bg-elevated)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <span className="material-symbols-outlined" style={{ color: 'var(--text-tertiary)' }}>notifications</span>
+            </button>
+            <button className="btn-primary btn-sm">
+              Download Report
+            </button>
           </div>
-        )}
-        {activeTab === 'voice' && <VoiceOrderPanel />}
-      </main>
+        </div>
 
-      {/* ─── Footer ─── */}
-      <footer className="max-w-7xl mx-auto mt-12 py-6 text-center text-xs text-slate-500 border-t border-slate-800">
-        Petpooja AI Copilot — Built for Hackathon 2025 · Revenue Intelligence + Voice Ordering
-      </footer>
-    </div>
+        {/* Page Content */}
+        <div className="page-content animate-in" key={activePage + refreshKey}>
+          {activePage === 'dashboard' && <Dashboard onNavigate={setActivePage} />}
+          {activePage === 'menu' && <MenuIntelligence />}
+          {activePage === 'combos' && <ComboEngine />}
+          {activePage === 'voice' && <VoiceOrders />}
+          {activePage === 'history' && <OrderHistory />}
+          {activePage === 'settings' && <Settings />}
+        </div>
+      </div>
+    </>
   )
 }

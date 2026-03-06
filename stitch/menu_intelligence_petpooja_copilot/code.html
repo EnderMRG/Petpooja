@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Menu Intelligence - Petpooja Copilot</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f97415",
+                        "background-light": "#f8f7f5",
+                        "background-dark": "#23170f",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Side Navigation Bar -->
+<aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<h1 class="text-sm font-bold leading-none">Petpooja Copilot</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">AI Restaurant Assistant</p>
+</div>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg bg-primary/10 text-primary" href="#">
+<span class="material-symbols-outlined text-xl">insights</span>
+                    Menu Intelligence
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400">inventory_2</span>
+                    Inventory
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400">payments</span>
+                    Sales
+                </a>
+<a class="flex items-center gap-3 px-3 py-2 text-sm font-medium rounded-lg text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors" href="#">
+<span class="material-symbols-outlined text-xl text-slate-400">bar_chart</span>
+                    Reports
+                </a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 px-3 py-2">
+<div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden" data-alt="User profile avatar of a restaurant owner" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBfkRuUaGqI85syobSpGvk5a1eVlMS0Son3FsVXHm0QfWmkDe6avDJto6HM-iLlxuZp6i3239KYWtrM_KwJKKJq0QNBrmo3toOHS9ohnxf72QdrBwpE9kXWKlnWNjN2dCbn56C4-WOIAfZO3ZxXTyhY_r4xadVfCbODio7gKHRK0ZT4pbo_2dpYu0Utj2h-Fb31zja80359Y0CMiudAiBD0AmeopaZQ_-6hHNF6eaeAAzZA_NzH7MvppzXrHs51yD61lR0qSPbDcpeA')"></div>
+<div class="flex-1 min-w-0">
+<p class="text-xs font-medium truncate">Rajesh Kumar</p>
+<p class="text-[10px] text-slate-500 truncate">Admin Access</p>
+</div>
+<span class="material-symbols-outlined text-slate-400 text-sm">settings</span>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col overflow-hidden">
+<!-- Top Header -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-between px-8 shrink-0">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">analytics</span>
+<h2 class="text-lg font-bold">Menu Intelligence</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">notifications</span>
+</button>
+<button class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+<span class="material-symbols-outlined text-xl">help</span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:border-slate-800 mx-1"></div>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-sm font-medium">
+<span class="material-symbols-outlined text-sm">calendar_today</span>
+                        Last 30 Days
+                    </button>
+</div>
+</header>
+<!-- Content -->
+<div class="flex-1 overflow-y-auto p-8">
+<!-- Filters & Search -->
+<div class="flex flex-col gap-6 mb-8">
+<div class="flex flex-wrap items-center justify-between gap-4">
+<div class="flex gap-2 overflow-x-auto pb-1">
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-primary text-white shadow-sm whitespace-nowrap">All Items</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary/50 whitespace-nowrap transition-colors">⭐ Stars</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary/50 whitespace-nowrap transition-colors">🌟 Hidden Stars</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary/50 whitespace-nowrap transition-colors">⚠️ Plowhorses</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary/50 whitespace-nowrap transition-colors">💀 Dogs</button>
+</div>
+<div class="relative w-full max-w-sm">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
+<input class="w-full pl-10 pr-4 py-2 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none text-sm transition-all" placeholder="Search menu item..." type="text"/>
+</div>
+</div>
+</div>
+<!-- Data Table -->
+<div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm border-collapse">
+<thead>
+<tr class="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
+<th class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400">Item Name</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400">Category</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400">Selling Price</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400">Food Cost</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400">Contribution Margin</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400 text-center">Velocity</th>
+<th class="px-4 py-4 font-semibold text-slate-600 dark:text-slate-400">Menu Status</th>
+<th class="px-6 py-4 font-semibold text-slate-600 dark:text-slate-400 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+<!-- Item 1: Star -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 font-medium">Paneer Butter Masala</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Main Course</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹350</td>
+<td class="px-4 py-4 text-slate-500">₹110</td>
+<td class="px-4 py-4">
+<div class="font-medium text-emerald-600 dark:text-emerald-400">₹240</div>
+<div class="text-[11px] text-slate-400">68.5% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                            Fast
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+                                            Star
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors uppercase tracking-wider">Promote</button>
+</td>
+</tr>
+<!-- Item 2: Star -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-slate-50/30 dark:bg-slate-800/10">
+<td class="px-6 py-4 font-medium">Veg Biryani</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Main Course</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹280</td>
+<td class="px-4 py-4 text-slate-500">₹90</td>
+<td class="px-4 py-4">
+<div class="font-medium text-emerald-600 dark:text-emerald-400">₹190</div>
+<div class="text-[11px] text-slate-400">67.8% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                            Fast
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+                                            Star
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors uppercase tracking-wider">Promote</button>
+</td>
+</tr>
+<!-- Item 3: Hidden Star (Highlighted) -->
+<tr class="border-l-4 border-l-primary bg-primary/5 hover:bg-primary/10 transition-colors">
+<td class="px-6 py-4 font-medium">Paneer Tikka</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Appetizer</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹220</td>
+<td class="px-4 py-4 text-slate-500">₹70</td>
+<td class="px-4 py-4">
+<div class="font-medium text-emerald-600 dark:text-emerald-400">₹150</div>
+<div class="text-[11px] text-slate-400">68.2% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                                            Moderate
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-amber-500 font-medium">
+<span class="material-symbols-outlined text-lg">auto_awesome</span>
+                                            Hidden Star
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded border border-primary text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors uppercase tracking-wider">Review Pricing</button>
+</td>
+</tr>
+<!-- Item 4: Hidden Star -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-slate-50/30 dark:bg-slate-800/10">
+<td class="px-6 py-4 font-medium">Cold Coffee</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Beverage</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹150</td>
+<td class="px-4 py-4 text-slate-500">₹45</td>
+<td class="px-4 py-4">
+<div class="font-medium text-emerald-600 dark:text-emerald-400">₹105</div>
+<div class="text-[11px] text-slate-400">70.0% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400">
+                                            Moderate
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-amber-500 font-medium">
+<span class="material-symbols-outlined text-lg">auto_awesome</span>
+                                            Hidden Star
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded border border-primary text-primary text-xs font-bold hover:bg-primary hover:text-white transition-colors uppercase tracking-wider">Review Pricing</button>
+</td>
+</tr>
+<!-- Item 5: Plowhorse -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 font-medium">Garlic Naan</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Breads</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹60</td>
+<td class="px-4 py-4 text-slate-500">₹25</td>
+<td class="px-4 py-4">
+<div class="font-medium text-slate-700 dark:text-slate-300">₹35</div>
+<div class="text-[11px] text-slate-400">58.3% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                            Fast
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-slate-500 font-medium">
+<span class="material-symbols-outlined text-lg">warning</span>
+                                            Plowhorse
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-400 text-xs font-bold hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors uppercase tracking-wider">Optimize</button>
+</td>
+</tr>
+<!-- Item 6: Dog -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors bg-slate-50/30 dark:bg-slate-800/10">
+<td class="px-6 py-4 font-medium">Samosa</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Snacks</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹40</td>
+<td class="px-4 py-4 text-slate-500">₹20</td>
+<td class="px-4 py-4">
+<div class="font-medium text-rose-500">₹20</div>
+<div class="text-[11px] text-slate-400">50.0% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-400">
+                                            Slow
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-slate-400 font-medium">
+<span class="material-symbols-outlined text-lg">skull</span>
+                                            Dog
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded border border-rose-200 text-rose-500 text-xs font-bold hover:bg-rose-50 transition-colors uppercase tracking-wider">Review</button>
+</td>
+</tr>
+<!-- Item 7: Additional Item -->
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 font-medium">Chicken Hakka Noodles</td>
+<td class="px-4 py-4">
+<span class="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-bold text-slate-600 dark:text-slate-400 uppercase tracking-tight">Chinese</span>
+</td>
+<td class="px-4 py-4 text-slate-700 dark:text-slate-300">₹320</td>
+<td class="px-4 py-4 text-slate-500">₹115</td>
+<td class="px-4 py-4">
+<div class="font-medium text-emerald-600 dark:text-emerald-400">₹205</div>
+<div class="text-[11px] text-slate-400">64.1% margin</div>
+</td>
+<td class="px-4 py-4 text-center">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400">
+                                            Fast
+                                        </span>
+</td>
+<td class="px-4 py-4">
+<div class="flex items-center gap-1.5 text-primary font-medium">
+<span class="material-symbols-outlined text-lg fill-1">star</span>
+                                            Star
+                                        </div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="px-3 py-1.5 rounded bg-primary text-white text-xs font-bold hover:bg-primary/90 transition-colors uppercase tracking-wider">Promote</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="px-6 py-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800/30 flex items-center justify-between">
+<p class="text-xs text-slate-500 dark:text-slate-400">Showing 7 of 124 menu items</p>
+<div class="flex gap-2">
+<button class="p-1 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined text-sm">chevron_left</span>
+</button>
+<button class="p-1 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Insight Footer Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+<div class="p-4 bg-primary/5 border border-primary/20 rounded-xl">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-primary">tips_and_updates</span>
+<h4 class="font-semibold text-sm">AI Recommendation</h4>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            "Paneer Tikka" has a high margin but moderate sales. Try highlighting it in the "Chef's Specials" section to convert it into a Star.
+                        </p>
+</div>
+<div class="p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-slate-400">trending_up</span>
+<h4 class="font-semibold text-sm">Category Performance</h4>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Main Course items are your primary revenue driver (52%), followed by Appetizers (28%). Beverages show the highest potential for growth.
+                        </p>
+</div>
+<div class="p-4 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-slate-400">warning</span>
+<h4 class="font-semibold text-sm">Cost Alert</h4>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                            Raw material costs for Dairy have increased by 12% this week. This impacts margins for 15 menu items including "Paneer Butter Masala".
+                        </p>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
