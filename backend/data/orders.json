@@ -24,5 +24,23 @@
     "upsell_accepted": false,
     "language_detected": "Hinglish",
     "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-EEE397",
+    "timestamp": "2026-03-06T12:04:16.274719",
+    "items": [
+      {
+        "item_id": "M002",
+        "name": "Paneer Burger",
+        "qty": 4,
+        "modifiers": [],
+        "price": 179,
+        "match_confidence": 81.4814814814815
+      }
+    ],
+    "total": 716,
+    "upsell_accepted": false,
+    "language_detected": "Hinglish",
+    "status": "confirmed"
   }
 ]

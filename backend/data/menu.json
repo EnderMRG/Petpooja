@@ -1,57 +1,410 @@
 [
-  {"item_id": "M001", "name": "Classic Veg Burger", "category": "Burgers", "selling_price": 149, "food_cost": 52, "is_available": true},
-  {"item_id": "M002", "name": "Paneer Burger", "category": "Burgers", "selling_price": 179, "food_cost": 58, "is_available": true},
-  {"item_id": "M003", "name": "Crispy Chicken Burger", "category": "Burgers", "selling_price": 199, "food_cost": 75, "is_available": true},
-  {"item_id": "M004", "name": "Double Decker Burger", "category": "Burgers", "selling_price": 249, "food_cost": 95, "is_available": true},
-  {"item_id": "M005", "name": "Spicy Aloo Tikki Burger", "category": "Burgers", "selling_price": 129, "food_cost": 38, "is_available": true},
-  {"item_id": "M006", "name": "BBQ Chicken Burger", "category": "Burgers", "selling_price": 229, "food_cost": 100, "is_available": true},
-  {"item_id": "M007", "name": "Mushroom Swiss Burger", "category": "Burgers", "selling_price": 209, "food_cost": 72, "is_available": true},
-  {"item_id": "M008", "name": "Tandoori Paneer Burger", "category": "Burgers", "selling_price": 189, "food_cost": 55, "is_available": true},
-
-  {"item_id": "M009", "name": "Margherita Pizza", "category": "Pizzas", "selling_price": 199, "food_cost": 60, "is_available": true},
-  {"item_id": "M010", "name": "Paneer Tikka Pizza", "category": "Pizzas", "selling_price": 279, "food_cost": 85, "is_available": true},
-  {"item_id": "M011", "name": "Chicken Pepperoni Pizza", "category": "Pizzas", "selling_price": 329, "food_cost": 120, "is_available": true},
-  {"item_id": "M012", "name": "Farm Fresh Veggie Pizza", "category": "Pizzas", "selling_price": 249, "food_cost": 70, "is_available": true},
-  {"item_id": "M013", "name": "BBQ Chicken Pizza", "category": "Pizzas", "selling_price": 349, "food_cost": 140, "is_available": true},
-  {"item_id": "M014", "name": "Paneer Makhani Pizza", "category": "Pizzas", "selling_price": 299, "food_cost": 90, "is_available": true},
-  {"item_id": "M015", "name": "Cheese Burst Pizza", "category": "Pizzas", "selling_price": 319, "food_cost": 130, "is_available": true},
-  {"item_id": "M016", "name": "Mushroom Truffle Pizza", "category": "Pizzas", "selling_price": 359, "food_cost": 100, "is_available": true},
-
-  {"item_id": "M017", "name": "Paneer Tikka", "category": "Starters", "selling_price": 219, "food_cost": 65, "is_available": true},
-  {"item_id": "M018", "name": "Chicken Wings", "category": "Starters", "selling_price": 249, "food_cost": 90, "is_available": true},
-  {"item_id": "M019", "name": "French Fries", "category": "Starters", "selling_price": 99, "food_cost": 22, "is_available": true},
-  {"item_id": "M020", "name": "Loaded Nachos", "category": "Starters", "selling_price": 179, "food_cost": 48, "is_available": true},
-  {"item_id": "M021", "name": "Garlic Bread", "category": "Starters", "selling_price": 129, "food_cost": 30, "is_available": true},
-  {"item_id": "M022", "name": "Stuffed Mushrooms", "category": "Starters", "selling_price": 199, "food_cost": 55, "is_available": true},
-  {"item_id": "M023", "name": "Spring Rolls", "category": "Starters", "selling_price": 149, "food_cost": 40, "is_available": true},
-  {"item_id": "M024", "name": "Hara Bhara Kebab", "category": "Starters", "selling_price": 169, "food_cost": 42, "is_available": true},
-  {"item_id": "M025", "name": "Chicken Seekh Kebab", "category": "Starters", "selling_price": 229, "food_cost": 80, "is_available": true},
-  {"item_id": "M026", "name": "Crispy Corn", "category": "Starters", "selling_price": 139, "food_cost": 32, "is_available": true},
-
-  {"item_id": "M027", "name": "Cold Coffee", "category": "Beverages", "selling_price": 129, "food_cost": 28, "is_available": true},
-  {"item_id": "M028", "name": "Mango Lassi", "category": "Beverages", "selling_price": 109, "food_cost": 25, "is_available": true},
-  {"item_id": "M029", "name": "Fresh Lime Soda", "category": "Beverages", "selling_price": 79, "food_cost": 12, "is_available": true},
-  {"item_id": "M030", "name": "Masala Chai", "category": "Beverages", "selling_price": 49, "food_cost": 8, "is_available": true},
-  {"item_id": "M031", "name": "Oreo Milkshake", "category": "Beverages", "selling_price": 159, "food_cost": 38, "is_available": true},
-  {"item_id": "M032", "name": "Mojito", "category": "Beverages", "selling_price": 139, "food_cost": 30, "is_available": true},
-  {"item_id": "M033", "name": "Strawberry Smoothie", "category": "Beverages", "selling_price": 149, "food_cost": 35, "is_available": true},
-  {"item_id": "M034", "name": "Hot Chocolate", "category": "Beverages", "selling_price": 119, "food_cost": 28, "is_available": true},
-  {"item_id": "M035", "name": "Iced Tea", "category": "Beverages", "selling_price": 89, "food_cost": 15, "is_available": true},
-  {"item_id": "M036", "name": "Cappuccino", "category": "Beverages", "selling_price": 139, "food_cost": 32, "is_available": true},
-
-  {"item_id": "M037", "name": "Chocolate Brownie", "category": "Desserts", "selling_price": 149, "food_cost": 40, "is_available": true},
-  {"item_id": "M038", "name": "Gulab Jamun", "category": "Desserts", "selling_price": 99, "food_cost": 22, "is_available": true},
-  {"item_id": "M039", "name": "Ice Cream Sundae", "category": "Desserts", "selling_price": 179, "food_cost": 50, "is_available": true},
-  {"item_id": "M040", "name": "Rasgulla", "category": "Desserts", "selling_price": 89, "food_cost": 20, "is_available": true},
-  {"item_id": "M041", "name": "Cheesecake Slice", "category": "Desserts", "selling_price": 199, "food_cost": 65, "is_available": true},
-  {"item_id": "M042", "name": "Tiramisu", "category": "Desserts", "selling_price": 249, "food_cost": 70, "is_available": true},
-  {"item_id": "M043", "name": "Mango Kulfi", "category": "Desserts", "selling_price": 109, "food_cost": 25, "is_available": true},
-  {"item_id": "M044", "name": "Rasmalai", "category": "Desserts", "selling_price": 119, "food_cost": 30, "is_available": true},
-  {"item_id": "M045", "name": "Chocolate Lava Cake", "category": "Desserts", "selling_price": 229, "food_cost": 60, "is_available": true},
-
-  {"item_id": "M046", "name": "Peri Peri Fries", "category": "Starters", "selling_price": 119, "food_cost": 28, "is_available": true},
-  {"item_id": "M047", "name": "Cheese Garlic Bread", "category": "Starters", "selling_price": 159, "food_cost": 42, "is_available": true},
-  {"item_id": "M048", "name": "Veg Manchurian", "category": "Starters", "selling_price": 169, "food_cost": 45, "is_available": true},
-  {"item_id": "M049", "name": "Chicken Lollipop", "category": "Starters", "selling_price": 239, "food_cost": 85, "is_available": true},
-  {"item_id": "M050", "name": "Paneer 65", "category": "Starters", "selling_price": 189, "food_cost": 50, "is_available": true}
+  {
+    "item_id": "M001",
+    "name": "Classic Veg Burger",
+    "category": "Burgers",
+    "selling_price": 149,
+    "food_cost": 52,
+    "is_available": true
+  },
+  {
+    "item_id": "M002",
+    "name": "Paneer Burger",
+    "category": "Burgers",
+    "selling_price": 179,
+    "food_cost": 58,
+    "is_available": true
+  },
+  {
+    "item_id": "M003",
+    "name": "Crispy Chicken Burger",
+    "category": "Burgers",
+    "selling_price": 199,
+    "food_cost": 75,
+    "is_available": true
+  },
+  {
+    "item_id": "M004",
+    "name": "Double Decker Burger",
+    "category": "Burgers",
+    "selling_price": 249,
+    "food_cost": 95,
+    "is_available": true
+  },
+  {
+    "item_id": "M005",
+    "name": "Spicy Aloo Tikki Burger",
+    "category": "Burgers",
+    "selling_price": 129,
+    "food_cost": 38,
+    "is_available": true
+  },
+  {
+    "item_id": "M006",
+    "name": "BBQ Chicken Burger",
+    "category": "Burgers",
+    "selling_price": 229,
+    "food_cost": 100,
+    "is_available": true
+  },
+  {
+    "item_id": "M007",
+    "name": "Mushroom Swiss Burger",
+    "category": "Burgers",
+    "selling_price": 209,
+    "food_cost": 72,
+    "is_available": true
+  },
+  {
+    "item_id": "M008",
+    "name": "Tandoori Paneer Burger",
+    "category": "Burgers",
+    "selling_price": 189,
+    "food_cost": 55,
+    "is_available": true
+  },
+  {
+    "item_id": "M009",
+    "name": "Margherita Pizza",
+    "category": "Pizzas",
+    "selling_price": 199,
+    "food_cost": 60,
+    "is_available": true
+  },
+  {
+    "item_id": "M010",
+    "name": "Paneer Tikka Pizza",
+    "category": "Pizzas",
+    "selling_price": 279,
+    "food_cost": 85,
+    "is_available": true
+  },
+  {
+    "item_id": "M011",
+    "name": "Chicken Pepperoni Pizza",
+    "category": "Pizzas",
+    "selling_price": 329,
+    "food_cost": 120,
+    "is_available": true
+  },
+  {
+    "item_id": "M012",
+    "name": "Farm Fresh Veggie Pizza",
+    "category": "Pizzas",
+    "selling_price": 249,
+    "food_cost": 70,
+    "is_available": true
+  },
+  {
+    "item_id": "M013",
+    "name": "BBQ Chicken Pizza",
+    "category": "Pizzas",
+    "selling_price": 349,
+    "food_cost": 140,
+    "is_available": true
+  },
+  {
+    "item_id": "M014",
+    "name": "Paneer Makhani Pizza",
+    "category": "Pizzas",
+    "selling_price": 299,
+    "food_cost": 90,
+    "is_available": true
+  },
+  {
+    "item_id": "M015",
+    "name": "Cheese Burst Pizza",
+    "category": "Pizzas",
+    "selling_price": 319,
+    "food_cost": 130,
+    "is_available": true
+  },
+  {
+    "item_id": "M016",
+    "name": "Mushroom Truffle Pizza",
+    "category": "Pizzas",
+    "selling_price": 359,
+    "food_cost": 100,
+    "is_available": true
+  },
+  {
+    "item_id": "M017",
+    "name": "Paneer Tikka",
+    "category": "Starters",
+    "selling_price": 219,
+    "food_cost": 65,
+    "is_available": true
+  },
+  {
+    "item_id": "M018",
+    "name": "Chicken Wings",
+    "category": "Starters",
+    "selling_price": 249,
+    "food_cost": 90,
+    "is_available": true
+  },
+  {
+    "item_id": "M019",
+    "name": "French Fries",
+    "category": "Starters",
+    "selling_price": 99,
+    "food_cost": 22,
+    "is_available": true
+  },
+  {
+    "item_id": "M020",
+    "name": "Loaded Nachos",
+    "category": "Starters",
+    "selling_price": 179,
+    "food_cost": 48,
+    "is_available": true
+  },
+  {
+    "item_id": "M021",
+    "name": "Garlic Bread",
+    "category": "Starters",
+    "selling_price": 129,
+    "food_cost": 30,
+    "is_available": true
+  },
+  {
+    "item_id": "M022",
+    "name": "Stuffed Mushrooms",
+    "category": "Starters",
+    "selling_price": 199,
+    "food_cost": 55,
+    "is_available": true
+  },
+  {
+    "item_id": "M023",
+    "name": "Spring Rolls",
+    "category": "Starters",
+    "selling_price": 149,
+    "food_cost": 40,
+    "is_available": true
+  },
+  {
+    "item_id": "M024",
+    "name": "Hara Bhara Kebab",
+    "category": "Starters",
+    "selling_price": 169,
+    "food_cost": 42,
+    "is_available": true
+  },
+  {
+    "item_id": "M025",
+    "name": "Chicken Seekh Kebab",
+    "category": "Starters",
+    "selling_price": 229,
+    "food_cost": 80,
+    "is_available": true
+  },
+  {
+    "item_id": "M026",
+    "name": "Crispy Corn",
+    "category": "Starters",
+    "selling_price": 139,
+    "food_cost": 32,
+    "is_available": true
+  },
+  {
+    "item_id": "M027",
+    "name": "Cold Coffee",
+    "category": "Beverages",
+    "selling_price": 129,
+    "food_cost": 28,
+    "is_available": true
+  },
+  {
+    "item_id": "M028",
+    "name": "Mango Lassi",
+    "category": "Beverages",
+    "selling_price": 109,
+    "food_cost": 25,
+    "is_available": true
+  },
+  {
+    "item_id": "M029",
+    "name": "Fresh Lime Soda",
+    "category": "Beverages",
+    "selling_price": 79,
+    "food_cost": 12,
+    "is_available": true
+  },
+  {
+    "item_id": "M030",
+    "name": "Masala Chai",
+    "category": "Beverages",
+    "selling_price": 49,
+    "food_cost": 8,
+    "is_available": true
+  },
+  {
+    "item_id": "M031",
+    "name": "Oreo Milkshake",
+    "category": "Beverages",
+    "selling_price": 159,
+    "food_cost": 38,
+    "is_available": true
+  },
+  {
+    "item_id": "M032",
+    "name": "Mojito",
+    "category": "Beverages",
+    "selling_price": 139,
+    "food_cost": 30,
+    "is_available": true
+  },
+  {
+    "item_id": "M033",
+    "name": "Strawberry Smoothie",
+    "category": "Beverages",
+    "selling_price": 149,
+    "food_cost": 35,
+    "is_available": true
+  },
+  {
+    "item_id": "M034",
+    "name": "Hot Chocolate",
+    "category": "Beverages",
+    "selling_price": 119,
+    "food_cost": 28,
+    "is_available": true
+  },
+  {
+    "item_id": "M035",
+    "name": "Iced Tea",
+    "category": "Beverages",
+    "selling_price": 89,
+    "food_cost": 15,
+    "is_available": true
+  },
+  {
+    "item_id": "M036",
+    "name": "Cappuccino",
+    "category": "Beverages",
+    "selling_price": 139,
+    "food_cost": 32,
+    "is_available": true
+  },
+  {
+    "item_id": "M037",
+    "name": "Chocolate Brownie",
+    "category": "Desserts",
+    "selling_price": 149,
+    "food_cost": 40,
+    "is_available": true
+  },
+  {
+    "item_id": "M038",
+    "name": "Gulab Jamun",
+    "category": "Desserts",
+    "selling_price": 99,
+    "food_cost": 22,
+    "is_available": true
+  },
+  {
+    "item_id": "M039",
+    "name": "Ice Cream Sundae",
+    "category": "Desserts",
+    "selling_price": 179,
+    "food_cost": 50,
+    "is_available": true
+  },
+  {
+    "item_id": "M040",
+    "name": "Rasgulla",
+    "category": "Desserts",
+    "selling_price": 89,
+    "food_cost": 20,
+    "is_available": true
+  },
+  {
+    "item_id": "M041",
+    "name": "Cheesecake Slice",
+    "category": "Desserts",
+    "selling_price": 199,
+    "food_cost": 65,
+    "is_available": true
+  },
+  {
+    "item_id": "M042",
+    "name": "Tiramisu",
+    "category": "Desserts",
+    "selling_price": 249,
+    "food_cost": 70,
+    "is_available": true
+  },
+  {
+    "item_id": "M043",
+    "name": "Mango Kulfi",
+    "category": "Desserts",
+    "selling_price": 109,
+    "food_cost": 25,
+    "is_available": true
+  },
+  {
+    "item_id": "M044",
+    "name": "Rasmalai",
+    "category": "Desserts",
+    "selling_price": 119,
+    "food_cost": 30,
+    "is_available": true
+  },
+  {
+    "item_id": "M045",
+    "name": "Chocolate Lava Cake",
+    "category": "Desserts",
+    "selling_price": 229,
+    "food_cost": 60,
+    "is_available": true
+  },
+  {
+    "item_id": "M046",
+    "name": "Peri Peri Fries",
+    "category": "Starters",
+    "selling_price": 119,
+    "food_cost": 28,
+    "is_available": true
+  },
+  {
+    "item_id": "M047",
+    "name": "Cheese Garlic Bread",
+    "category": "Starters",
+    "selling_price": 159,
+    "food_cost": 42,
+    "is_available": true
+  },
+  {
+    "item_id": "M048",
+    "name": "Veg Manchurian",
+    "category": "Starters",
+    "selling_price": 169,
+    "food_cost": 45,
+    "is_available": true
+  },
+  {
+    "item_id": "M049",
+    "name": "Chicken Lollipop",
+    "category": "Starters",
+    "selling_price": 239,
+    "food_cost": 85,
+    "is_available": true
+  },
+  {
+    "item_id": "M050",
+    "name": "Paneer 65",
+    "category": "Starters",
+    "selling_price": 189,
+    "food_cost": 50,
+    "is_available": true
+  },
+  {
+    "item_id": "M051",
+    "name": "Mooglai Chicken",
+    "category": "Main Course",
+    "selling_price": 499.0,
+    "food_cost": 299.0,
+    "is_available": true
+  }
 ]
