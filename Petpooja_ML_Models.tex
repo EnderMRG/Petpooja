@@ -1,0 +1,805 @@
+\documentclass[12pt, a4paper]{article}
+
+% ─── Packages ───
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{tabularx}
+\usepackage{parskip}
+
+% ─── Colors ───
+\definecolor{orange}{HTML}{F97415}
+\definecolor{darkslate}{HTML}{0F172A}
+\definecolor{gray}{HTML}{64748B}
+\definecolor{codebg}{HTML}{F1F5F9}
+\definecolor{green}{HTML}{10B981}
+
+% ─── Hyperlinks ───
+\hypersetup{
+    colorlinks=true,
+    linkcolor=orange,
+    urlcolor=orange,
+}
+
+% ─── Code Listings ───
+\lstset{
+    language=Python,
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{codebg},
+    frame=single,
+    rulecolor=\color{codebg},
+    breaklines=true,
+    breakatwhitespace=true,
+    tabsize=4,
+    showstringspaces=false,
+    keywordstyle=\color{blue!70!black}\bfseries,
+    commentstyle=\color{green!50!black}\itshape,
+    stringstyle=\color{orange!80!black},
+    xleftmargin=8pt,
+    xrightmargin=8pt,
+    framexleftmargin=4pt,
+    framexrightmargin=4pt,
+    aboveskip=10pt,
+    belowskip=10pt,
+}
+
+% ─── Section Styling ───
+\titleformat{\section}
+    {\Large\bfseries\color{darkslate}}
+    {\thesection.}{0.5em}{}
+    [\vspace{-0.5em}{\color{orange}\rule{4cm}{2pt}}]
+
+\titleformat{\subsection}
+    {\large\bfseries\color{orange}}
+    {\thesubsection}{0.5em}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries\color{darkslate}}
+    {\thesubsubsection}{0.5em}{}
+
+% ─── Header / Footer ───
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\color{gray}Petpooja AI Copilot}
+\fancyhead[R]{\small\color{gray}ML Model Implementation Guide}
+\fancyfoot[C]{\small\color{gray}\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{orange}\leaders\hrule height \headrulewidth\hfill}}
+
+% ─── Info Box ───
+\tcbuselibrary{skins}
+\newtcolorbox{infobox}[1][]{
+    colback=codebg, colframe=orange, 
+    fonttitle=\bfseries, title=#1,
+    boxrule=0.5pt, arc=4pt,
+    left=8pt, right=8pt, top=6pt, bottom=6pt
+}
+
+% ═══════════════════════════════════════════════
+\begin{document}
+
+% ─── Title Page ───
+\begin{titlepage}
+    \centering
+    \vspace*{3cm}
+    
+    {\Huge\bfseries\color{darkslate} Petpooja AI Copilot \par}
+    \vspace{0.5cm}
+    {\LARGE\color{gray} ML Model Implementation \& Training Guide \par}
+    \vspace{1cm}
+    {\color{orange}\rule{6cm}{2pt}\par}
+    \vspace{1.5cm}
+    
+    {\large\color{gray}
+    A comprehensive technical guide covering four proposed ML models\\[6pt]
+    for the Petpooja restaurant intelligence platform:\\[12pt]
+    \textbf{Demand Forecasting} $\cdot$ \textbf{NLP Intent Parsing}\\[4pt]
+    \textbf{Collaborative Filtering} $\cdot$ \textbf{Anomaly Detection}\\[24pt]
+    Each section includes: architecture overview, data requirements,\\
+    step-by-step training code, evaluation metrics, and integration strategy.
+    \par}
+    
+    \vfill
+    {\color{gray}\today}
+\end{titlepage}
+
+% ─── Table of Contents ───
+\tableofcontents
+\newpage
+
+
+% ════════════════════════════════════════════════════════════════════
+\section{Demand Forecasting (Time-Series Prediction)}
+% ════════════════════════════════════════════════════════════════════
+
+\begin{infobox}[Model Overview]
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Goal}       & Predict how many units of each menu item will sell in the next N days \\
+\textbf{Algorithm}  & Facebook Prophet (recommended) / LSTM / ARIMA \\
+\textbf{Library}    & \texttt{prophet}, \texttt{pandas}, \texttt{numpy} \\
+\textbf{Priority}   & \textcolor{red}{\textbf{HIGH}} --- connects Orders $\to$ Recipes $\to$ Inventory $\to$ Predictions \\
+\end{tabularx}
+\end{infobox}
+
+
+\subsection{How It Works}
+
+Time-series forecasting models analyze historical order patterns to predict future demand. The model learns:
+
+\begin{itemize}[nosep]
+    \item \textbf{Weekly seasonality} --- weekday vs.\ weekend traffic patterns
+    \item \textbf{Daily seasonality} --- lunch rush vs.\ dinner rush vs.\ off-hours
+    \item \textbf{Trend} --- overall growth or decline in item popularity
+    \item \textbf{External regressors} --- holidays, weather, local events (optional)
+\end{itemize}
+
+The output directly feeds into the inventory system: \textit{``You will need 15~kg chicken and 200 burger buns by Friday.''}
+
+
+\subsection{Data Requirements}
+
+\subsubsection{Minimum Data}
+At least \textbf{30 days} of timestamped order history. Accuracy improves significantly with 6+ months of data.
+
+\subsubsection{Data Schema (from \texttt{orders.json})}
+\begin{lstlisting}
+{
+  "order_id": "ORD-20260301-001",
+  "timestamp": "2026-03-01T12:34:00",
+  "items": [
+    { "item_id": "M001", "name": "Classic Veg Burger", "qty": 2 },
+    { "item_id": "M019", "name": "French Fries", "qty": 1 }
+  ]
+}
+\end{lstlisting}
+
+\subsubsection{Feature Engineering}
+Derive the following features from the raw timestamp:
+\begin{itemize}[nosep]
+    \item \texttt{day\_of\_week} (0=Mon, 6=Sun) --- captures weekly patterns
+    \item \texttt{hour\_of\_day} (0--23) --- captures meal-time peaks
+    \item \texttt{is\_weekend} (boolean) --- weekend traffic is typically 30--40\% higher
+    \item \texttt{is\_holiday} (boolean) --- from a public holiday calendar
+    \item \texttt{rolling\_avg\_7d} --- 7-day rolling average quantity per item
+    \item \texttt{weather\_temp} (optional) --- from a weather API; affects beverage sales
+\end{itemize}
+
+
+\subsection{Step-by-Step Training}
+
+\subsubsection{Step 1: Install Dependencies}
+\begin{lstlisting}[language=bash]
+pip install prophet pandas numpy scikit-learn
+\end{lstlisting}
+
+\subsubsection{Step 2: Prepare Training Data}
+\begin{lstlisting}
+import pandas as pd
+import json
+
+# Load historical orders
+with open("data/orders.json") as f:
+    orders = json.load(f)
+
+# Flatten to daily item counts
+rows = []
+for order in orders:
+    dt = pd.to_datetime(order["timestamp"]).date()
+    for item in order["items"]:
+        rows.append({
+            "ds": dt,
+            "item_id": item["item_id"],
+            "y": item["qty"]
+        })
+
+df = pd.DataFrame(rows)
+daily = df.groupby(["ds", "item_id"])["y"].sum().reset_index()
+\end{lstlisting}
+
+\subsubsection{Step 3: Train a Prophet Model Per Item}
+\begin{lstlisting}
+from prophet import Prophet
+import pickle
+
+models = {}
+for item_id in daily["item_id"].unique():
+    item_data = daily[daily["item_id"] == item_id][["ds", "y"]]
+    
+    model = Prophet(
+        daily_seasonality=True,
+        weekly_seasonality=True,
+        yearly_seasonality=False,   # need 2+ years of data
+        changepoint_prior_scale=0.05
+    )
+    model.fit(item_data)
+    models[item_id] = model
+
+# Save all trained models
+with open("models/demand_models.pkl", "wb") as f:
+    pickle.dump(models, f)
+\end{lstlisting}
+
+\subsubsection{Step 4: Generate Predictions}
+\begin{lstlisting}
+# Predict next 7 days for each item
+for item_id, model in models.items():
+    future = model.make_future_dataframe(periods=7)
+    forecast = model.predict(future)
+    
+    pred = forecast.tail(7)[["ds", "yhat", "yhat_lower", "yhat_upper"]]
+    print(f"{item_id}: next 7 days forecast")
+    print(pred.to_string(index=False))
+\end{lstlisting}
+
+\subsubsection{Step 5: Connect to Inventory}
+\begin{lstlisting}
+# For each predicted item demand, calculate ingredient needs
+recipes = load_recipes()       # from recipes.json
+inventory = load_inventory()   # from inventory.json
+
+for item_id, predicted_qty in predictions.items():
+    recipe = recipes.get(item_id, {})
+    for ing in recipe.get("ingredients", []):
+        needed = ing["qty"] * predicted_qty
+        current = get_stock(ing["ingredient_id"])
+        if current < needed:
+            shortfall = needed - current
+            alert(f"Order {shortfall} {ing['unit']} of {ing['name']}")
+\end{lstlisting}
+
+
+\subsection{Integration with Petpooja}
+\begin{itemize}[nosep]
+    \item Create API endpoint: \texttt{GET /forecast/\{item\_id\}?days=7}
+    \item Run daily cron job to retrain models at 2:00 AM
+    \item Display predictions on the Dashboard with confidence bands (chart)
+    \item Auto-generate purchase order suggestions when predicted demand exceeds stock
+\end{itemize}
+
+
+\subsection{Evaluation Metrics}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Metric} & \textbf{Description} & \textbf{Target} \\
+\midrule
+MAE   & Mean Absolute Error per item/day & $< 3$ units \\
+MAPE  & Mean Absolute Percentage Error   & $< 15\%$ \\
+Coverage & \% of actuals within prediction interval & $> 90\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+% ════════════════════════════════════════════════════════════════════
+\section{NLP Intent Parser (LLM-Based Order Understanding)}
+% ════════════════════════════════════════════════════════════════════
+
+\begin{infobox}[Model Overview]
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Goal}       & Replace regex + fuzzy-match parsing with an LLM that understands complex natural-language orders \\
+\textbf{Algorithm}  & Large Language Model (prompt engineering / fine-tuning) \\
+\textbf{Library}    & \texttt{transformers} + \texttt{torch} (local) \textbf{or} \texttt{openai} SDK (cloud) \\
+\textbf{Priority}   & \textcolor{red}{\textbf{HIGH}} --- dramatically improves voice order accuracy \\
+\end{tabularx}
+\end{infobox}
+
+
+\subsection{Why LLM Over Regex + Fuzzy Match?}
+
+The current system uses RapidFuzz for fuzzy string matching, which works well for simple orders but fails on:
+
+\begin{itemize}[nosep]
+    \item \textbf{Corrections:} ``Give me 2 burgers, actually make it 3''
+    \item \textbf{References:} ``Same thing as last order but no onions''
+    \item \textbf{Multi-item modifiers:} ``One margherita and one pepperoni, extra cheese on both''
+    \item \textbf{Quantities in words:} ``A couple of cold coffees and half a dozen samosas''
+    \item \textbf{Hinglish/slang:} ``Ek paneer wala pizza aur do chai de do''
+\end{itemize}
+
+An LLM understands context, intent, and corrections naturally.
+
+
+\subsection{Implementation Strategy}
+
+\subsubsection{Option A: Local Model (Google Gemma 2B)}
+
+This runs entirely on your machine --- no API cost, no data leaving your server.
+
+\begin{lstlisting}[language=bash]
+pip install transformers torch accelerate
+\end{lstlisting}
+
+\begin{lstlisting}
+from transformers import AutoTokenizer, AutoModelForCausalLM
+import json
+
+# Load model (first run downloads ~5 GB)
+model_name = "google/gemma-2b-it"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModelForCausalLM.from_pretrained(model_name)
+
+def parse_order_llm(transcription: str, menu_items: list) -> dict:
+    menu_str = "\n".join(
+        f"- {m['item_id']}: {m['name']} (Rs {m['selling_price']})"
+        for m in menu_items
+    )
+    
+    prompt = f"""You are a restaurant order parser.
+Given the spoken order and menu, extract items as JSON.
+
+MENU:
+{menu_str}
+
+CUSTOMER ORDER: "{transcription}"
+
+Respond ONLY with valid JSON:
+{{"items": [{{"item_id": "...", "name": "...", "qty": N,
+              "modifiers": [...], "price": N}}], 
+  "total": N}}"""
+    
+    inputs = tokenizer(prompt, return_tensors="pt")
+    outputs = model.generate(**inputs, max_new_tokens=512,
+                             temperature=0.1)
+    response = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    
+    # Extract JSON from response
+    json_start = response.rfind("{")
+    json_end = response.rfind("}") + 1
+    return json.loads(response[json_start:json_end])
+\end{lstlisting}
+
+
+\subsubsection{Option B: Cloud API (OpenAI GPT-4o-mini)}
+
+Lower latency ($<1$s), higher accuracy, but costs \$0.15 per 1M input tokens.
+
+\begin{lstlisting}
+import openai, json
+
+client = openai.OpenAI(api_key="sk-...")
+
+def parse_order_api(transcription: str, menu_items: list) -> dict:
+    menu_str = "\n".join(
+        f"- {m['item_id']}: {m['name']} (Rs {m['selling_price']})"
+        for m in menu_items
+    )
+    
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        response_format={"type": "json_object"},
+        messages=[
+            {"role": "system",
+             "content": f"You parse restaurant orders.\nMENU:\n{menu_str}"},
+            {"role": "user", "content": transcription}
+        ],
+        temperature=0.1
+    )
+    return json.loads(response.choices[0].message.content)
+\end{lstlisting}
+
+
+\subsection{Fine-Tuning (Optional --- Advanced)}
+
+For the highest accuracy, fine-tune a small model on your own data.
+
+\subsubsection{Step 1: Collect Training Data}
+Create a JSONL file with 100--500 labeled examples:
+\begin{lstlisting}
+{"input": "2 paneer burgers extra cheese and a cold coffee",
+ "output": {"items": [
+   {"item_id": "M002", "name": "Paneer Burger", "qty": 2,
+    "modifiers": ["extra cheese"]},
+   {"item_id": "M027", "name": "Cold Coffee", "qty": 1,
+    "modifiers": []}
+ ]}}
+\end{lstlisting}
+
+\subsubsection{Step 2: Fine-Tune with QLoRA}
+\begin{lstlisting}[language=bash]
+pip install peft trl datasets bitsandbytes
+\end{lstlisting}
+
+QLoRA allows fine-tuning a 2B parameter model on a single GPU (8~GB VRAM) by quantizing the base model to 4-bit and training only small adapter layers.
+
+\begin{itemize}[nosep]
+    \item Training data: 100--500 labeled examples
+    \item Training time: $\sim$30 minutes on a single GPU
+    \item Expected result: 95\%+ accuracy on order parsing
+\end{itemize}
+
+
+\subsection{Evaluation Metrics}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Metric} & \textbf{Description} & \textbf{Target} \\
+\midrule
+Exact Match Rate  & \% of orders with 100\% correct items & $> 90\%$ \\
+Item-Level F1     & Precision/recall for item extraction   & $> 0.95$ \\
+Modifier Accuracy & \% of modifiers correctly captured     & $> 85\%$ \\
+Latency           & End-to-end response time               & $< 2$s (local), $< 1$s (API) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+% ════════════════════════════════════════════════════════════════════
+\section{Collaborative Filtering (Personalized Upsell)}
+% ════════════════════════════════════════════════════════════════════
+
+\begin{infobox}[Model Overview]
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Goal}       & Learn customer ordering patterns to suggest personalized upsells \\
+\textbf{Algorithm}  & SVD (Matrix Factorization) / Neural Collaborative Filtering \\
+\textbf{Library}    & \texttt{scikit-surprise} (SVD) or \texttt{tensorflow} (Neural CF) \\
+\textbf{Priority}   & \textcolor{orange}{\textbf{MEDIUM}} --- requires customer identity tracking \\
+\end{tabularx}
+\end{infobox}
+
+
+\subsection{How It Works}
+
+Collaborative Filtering (CF) builds a \textbf{user--item interaction matrix} from order history. It discovers that ``customers who ordered Paneer Pizza also loved Garlic Bread'' and generates personalized recommendations.
+
+\begin{enumerate}[nosep]
+    \item Build matrix: rows = customers, columns = menu items, values = order frequency
+    \item Factorize the matrix into latent factors using SVD
+    \item For a given customer, predict scores for un-ordered items
+    \item Return top-K items with highest predicted scores
+\end{enumerate}
+
+\subsubsection{User--Item Matrix Example}
+\begin{center}
+\begin{tabular}{lccccc}
+\toprule
+              & M001 & M003 & M009 & M019 & M027 \\
+\midrule
+Customer\_001 & 5    & 0    & 3    & 4    & 2    \\
+Customer\_002 & 0    & 7    & 1    & 6    & 0    \\
+Customer\_003 & 3    & 2    & 0    & 1    & 5    \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textit{Values = number of times customer ordered that item.}
+
+
+\subsection{Data Requirements}
+\begin{itemize}[nosep]
+    \item Customer identification: phone number, loyalty ID, or table session
+    \item Minimum: \textbf{500 unique customers} with \textbf{3+ orders each}
+    \item More data = better recommendations (cold-start is the main challenge)
+\end{itemize}
+
+
+\subsection{Step-by-Step Training}
+
+\subsubsection{Step 1: Install Dependencies}
+\begin{lstlisting}[language=bash]
+pip install scikit-surprise pandas numpy
+\end{lstlisting}
+
+\subsubsection{Step 2: Prepare Interaction Data}
+\begin{lstlisting}
+import pandas as pd
+from surprise import Dataset, Reader, SVD
+from surprise.model_selection import cross_validate
+
+# Build user-item-rating dataframe from orders
+rows = []
+for order in orders:
+    cust_id = order.get("customer_id", "anonymous")
+    for item in order["items"]:
+        rows.append({
+            "user": cust_id,
+            "item": item["item_id"],
+            "rating": item["qty"]   # frequency as implicit rating
+        })
+
+df = pd.DataFrame(rows)
+df = df.groupby(["user", "item"])["rating"].sum().reset_index()
+df["rating"] = df["rating"].clip(1, 5)  # normalize to 1-5 scale
+\end{lstlisting}
+
+\subsubsection{Step 3: Train SVD Model}
+\begin{lstlisting}
+reader = Reader(rating_scale=(1, 5))
+data = Dataset.load_from_df(df[["user", "item", "rating"]], reader)
+
+# Train SVD
+algo = SVD(n_factors=50, n_epochs=30, lr_all=0.005, reg_all=0.02)
+trainset = data.build_full_trainset()
+algo.fit(trainset)
+
+# Cross-validate
+results = cross_validate(algo, data, measures=["RMSE", "MAE"], cv=5)
+print(f"RMSE: {results['test_rmse'].mean():.3f}")
+print(f"MAE:  {results['test_mae'].mean():.3f}")
+\end{lstlisting}
+
+\subsubsection{Step 4: Generate Recommendations}
+\begin{lstlisting}
+def get_recommendations(customer_id, menu_items, top_k=5):
+    """Get top-K item recommendations for a customer."""
+    ordered = set(df[df["user"] == customer_id]["item"])
+    candidates = [m["item_id"] for m in menu_items
+                  if m["item_id"] not in ordered]
+    
+    predictions = [
+        (iid, algo.predict(customer_id, iid).est)
+        for iid in candidates
+    ]
+    predictions.sort(key=lambda x: x[1], reverse=True)
+    return predictions[:top_k]
+\end{lstlisting}
+
+\subsubsection{Step 5: Cold-Start Fallback}
+\begin{lstlisting}
+def get_popular_items(top_k=5):
+    """Fallback for new customers with no order history."""
+    popularity = df.groupby("item")["rating"].sum()
+    return popularity.nlargest(top_k).index.tolist()
+\end{lstlisting}
+
+
+\subsection{Integration with Petpooja}
+\begin{itemize}[nosep]
+    \item Create endpoint: \texttt{GET /recommend/\{customer\_id\}?top\_k=5}
+    \item Add \texttt{customer\_id} field to the order flow (phone number or loyalty card)
+    \item Replace generic Apriori upsells with personalized CF recommendations
+    \item Fall back to popularity-based suggestions for new customers
+    \item Weekly retraining via cron job with latest order data
+\end{itemize}
+
+
+\subsection{Evaluation Metrics}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Metric} & \textbf{Description} & \textbf{Target} \\
+\midrule
+RMSE       & Root Mean Square Error on held-out data     & $< 1.0$ \\
+Hit Rate@5 & \% of test orders in top-5 recommendations & $> 30\%$ \\
+NDCG@5     & Normalized Discounted Cumulative Gain      & $> 0.4$ \\
+Coverage   & \% of catalog items ever recommended       & $> 60\%$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+% ════════════════════════════════════════════════════════════════════
+\section{Anomaly Detection (Revenue \& Inventory)}
+% ════════════════════════════════════════════════════════════════════
+
+\begin{infobox}[Model Overview]
+\begin{tabularx}{\textwidth}{@{}lX@{}}
+\textbf{Goal}       & Detect unusual patterns in revenue, orders, and inventory in real-time \\
+\textbf{Algorithm}  & Z-Score (statistical) + Isolation Forest (ML) \\
+\textbf{Library}    & \texttt{scikit-learn}, \texttt{numpy}, \texttt{pandas} \\
+\textbf{Priority}   & \textcolor{orange}{\textbf{MEDIUM}} --- critical for loss prevention \\
+\end{tabularx}
+\end{infobox}
+
+
+\subsection{Types of Anomalies Detected}
+\begin{itemize}[nosep]
+    \item \textbf{Revenue:} Sudden revenue drop $> 30\%$ compared to same day last week
+    \item \textbf{Orders:} Unusually high void/cancel rate (potential fraud)
+    \item \textbf{Inventory:} Ingredients depleting faster than order volume justifies (theft/waste)
+    \item \textbf{Timing:} Orders placed outside business hours (system misuse)
+    \item \textbf{Pricing:} Unauthorized discount patterns
+\end{itemize}
+
+
+\subsection{Data Requirements}
+\begin{itemize}[nosep]
+    \item Hourly revenue totals --- at least 14 days (30+ recommended)
+    \item Order-level data with timestamps, void status, discount flags
+    \item Inventory movement logs (depletion events with timestamps)
+\end{itemize}
+
+
+\subsection{Step-by-Step Training}
+
+\subsubsection{Step 1: Install Dependencies}
+\begin{lstlisting}[language=bash]
+pip install scikit-learn pandas numpy
+\end{lstlisting}
+
+\subsubsection{Step 2: Statistical Anomaly Detection (Z-Score)}
+
+Simple but effective for single-metric monitoring (e.g., daily revenue):
+
+\begin{lstlisting}
+import numpy as np
+import pandas as pd
+
+def detect_revenue_anomalies(daily_revenue, threshold=2.5):
+    """Flag days where revenue deviates > 2.5 std from mean."""
+    mean = daily_revenue.mean()
+    std = daily_revenue.std()
+    z_scores = (daily_revenue - mean) / std
+    
+    anomalies = daily_revenue[abs(z_scores) > threshold]
+    return [
+        {
+            "date": str(date),
+            "revenue": float(val),
+            "z_score": float(z),
+            "type": "low" if z < 0 else "high"
+        }
+        for date, val, z in zip(
+            anomalies.index, anomalies.values,
+            z_scores[abs(z_scores) > threshold]
+        )
+    ]
+\end{lstlisting}
+
+
+\subsubsection{Step 3: Isolation Forest (Multi-Dimensional)}
+
+For detecting complex anomalies across multiple features simultaneously:
+
+\begin{lstlisting}
+from sklearn.ensemble import IsolationForest
+from sklearn.preprocessing import StandardScaler
+
+# Feature matrix: each row = 1 hour of operations
+# Columns: [revenue, order_count, avg_order_value,
+#            void_rate, discount_rate, inventory_depletion]
+features = build_feature_matrix(orders, inventory_logs)
+
+# Scale features
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(features)
+
+# Train Isolation Forest
+model = IsolationForest(
+    n_estimators=200,
+    contamination=0.05,   # expect ~5% anomalies
+    max_features=0.8,
+    random_state=42
+)
+model.fit(X_scaled)
+
+# Predict: -1 = anomaly, 1 = normal
+predictions = model.predict(X_scaled)
+scores = model.decision_function(X_scaled)
+print(f"Anomalies found: {(predictions == -1).sum()}")
+\end{lstlisting}
+
+
+\subsubsection{Step 4: Real-Time Scoring}
+\begin{lstlisting}
+import pickle
+
+# Save model + scaler for production use
+with open("models/anomaly_model.pkl", "wb") as f:
+    pickle.dump({"model": model, "scaler": scaler}, f)
+
+def score_current_hour(current_features):
+    """Score the current hour's data for anomalies."""
+    with open("models/anomaly_model.pkl", "rb") as f:
+        bundle = pickle.load(f)
+    
+    X = bundle["scaler"].transform([current_features])
+    is_anomaly = bundle["model"].predict(X)[0] == -1
+    score = bundle["model"].decision_function(X)[0]
+    
+    if is_anomaly:
+        return {
+            "alert": True,
+            "severity": "HIGH" if score < -0.3 else "MEDIUM",
+            "score": float(score),
+            "message": classify_anomaly(current_features)
+        }
+    return {"alert": False}
+\end{lstlisting}
+
+
+\subsubsection{Step 5: Root Cause Classification}
+\begin{lstlisting}
+def classify_anomaly(features):
+    """Determine the most likely root cause."""
+    revenue, orders, aov, voids, discounts, depletion = features
+    
+    if voids > historical_void_mean * 2:
+        return "High void rate - possible fraud"
+    if depletion > expected_depletion * 1.5:
+        return "Excessive inventory depletion - check for waste/theft"
+    if revenue < historical_revenue_mean * 0.6:
+        return "Significant revenue drop - investigate operations"
+    if discounts > historical_discount_mean * 2:
+        return "Unusual discount pattern - verify authorization"
+    return "General anomaly - manual review needed"
+\end{lstlisting}
+
+
+\subsection{Integration with Petpooja}
+\begin{itemize}[nosep]
+    \item Create endpoint: \texttt{GET /alerts/anomalies?hours=24}
+    \item Run scoring every hour via APScheduler background task
+    \item Display alerts on Dashboard with severity badges (HIGH / MEDIUM / LOW)
+    \item Send push notifications for HIGH severity anomalies
+    \item Weekly model retraining on a rolling 60-day window
+\end{itemize}
+
+
+\subsection{Evaluation Metrics}
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Metric} & \textbf{Description} & \textbf{Target} \\
+\midrule
+Precision        & \% of flagged anomalies that are real     & $> 80\%$ \\
+Recall           & \% of actual anomalies caught             & $> 90\%$ \\
+False Positive Rate & Avoid alert fatigue                   & $< 5\%$ \\
+Time to Detect   & Anomaly flagged within N hours           & $< 1$ hour \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\newpage
+% ════════════════════════════════════════════════════════════════════
+\section{Summary \& Technology Stack}
+% ════════════════════════════════════════════════════════════════════
+
+\subsection{Model Comparison}
+
+\begin{center}
+\begin{tabular}{lllll}
+\toprule
+\textbf{Model} & \textbf{Algorithm} & \textbf{Library} & \textbf{Min Data} & \textbf{Priority} \\
+\midrule
+Demand Forecasting   & Prophet / LSTM       & \texttt{prophet}    & 30 days orders     & HIGH \\
+NLP Intent Parser    & LLM (Gemma/GPT)      & \texttt{transformers} & Menu + prompt    & HIGH \\
+Collaborative Filter & SVD / Neural CF      & \texttt{surprise}   & 500 customers      & MEDIUM \\
+Anomaly Detection    & Isolation Forest     & \texttt{scikit-learn} & 14 days ops data & MEDIUM \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+
+\subsection{Full Technology Stack}
+
+\begin{itemize}[nosep]
+    \item \textbf{Core:} Python 3.12, FastAPI, pandas, numpy
+    \item \textbf{Speech:} OpenAI Whisper (already implemented)
+    \item \textbf{NLP:} \texttt{transformers} + \texttt{torch} (local) or \texttt{openai} SDK (cloud)
+    \item \textbf{Forecasting:} \texttt{prophet} (Facebook) or \texttt{tensorflow}
+    \item \textbf{Recommendations:} \texttt{scikit-surprise}
+    \item \textbf{Anomaly Detection:} \texttt{scikit-learn} (Isolation Forest)
+    \item \textbf{Scheduling:} APScheduler or Celery for periodic retraining
+    \item \textbf{Model Storage:} Pickle files or MLflow for versioning
+    \item \textbf{Hardware:} GPU recommended for NLP model (NVIDIA T4 minimum)
+\end{itemize}
+
+
+\subsection{Implementation Roadmap}
+
+\begin{enumerate}
+    \item \textbf{Phase 1 (Weeks 1--2):} Implement Demand Forecasting with Prophet. Connect predictions to inventory alerts on the Dashboard.
+    \item \textbf{Phase 2 (Weeks 3--4):} Integrate NLP Intent Parser. Start with cloud API (GPT-4o-mini) for quick results, migrate to local Gemma model later.
+    \item \textbf{Phase 3 (Weeks 5--8):} Deploy Collaborative Filtering once customer identity tracking is in place. Requires loyalty or phone-number based identification.
+    \item \textbf{Phase 4 (Weeks 9--12):} Add Anomaly Detection. Start with Z-Score for revenue monitoring, then add Isolation Forest for multi-dimensional analysis.
+\end{enumerate}
+
+\vfill
+\begin{center}
+{\color{orange}\rule{8cm}{1.5pt}}\\[8pt]
+{\color{gray}\textit{Petpooja AI Copilot --- ML Model Implementation Guide}}\\[4pt]
+{\color{gray}\textit{Auto-generated $\cdot$ \today}}
+\end{center}
+
+\end{document}
