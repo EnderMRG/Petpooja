@@ -5,8 +5,8 @@ export default function LandingPage({ onEnterApp }) {
             <header style={{ position: 'sticky', top: 0, zIndex: 50, width: '100%', borderBottom: '1px solid #f1f5f9', background: 'rgba(255,255,255,0.85)', backdropFilter: 'blur(12px)' }}>
                 <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 32, height: 32, borderRadius: 8, background: '#f97415', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}>
-                            <span className="material-symbols-outlined" style={{ fontSize: 18 }}>restaurant_menu</span>
+                        <div style={{ width: 38, height: 38, borderRadius: 10, background: '#fff3e0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                            <img src="/petpoja.png" alt="Petpooja" style={{ width: 30, height: 30, objectFit: 'contain' }} />
                         </div>
                         <h2 style={{ fontSize: 18, fontWeight: 700, letterSpacing: '-0.02em' }}>Petpooja Copilot</h2>
                     </div>

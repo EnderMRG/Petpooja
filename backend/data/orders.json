@@ -384,5 +384,57 @@
     "upsell_accepted": false,
     "language_detected": "English",
     "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-F7460B",
+    "timestamp": "2026-03-06T14:40:43.498264",
+    "items": [
+      {
+        "item_id": "M001",
+        "name": "Classic Veg Burger",
+        "qty": 3,
+        "quantity": 3,
+        "price": 149,
+        "modifiers": []
+      }
+    ],
+    "total": 447,
+    "upsell_accepted": false,
+    "language_detected": "Manual",
+    "status": "confirmed"
+  },
+  {
+    "order_id": "ORD-9F6F2D",
+    "timestamp": "2026-03-06T14:42:35.325600",
+    "items": [
+      {
+        "item_id": "M001",
+        "name": "Classic Veg Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 149,
+        "match_confidence": 100
+      },
+      {
+        "item_id": "M002",
+        "name": "Paneer Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 179,
+        "match_confidence": 100
+      },
+      {
+        "item_id": "M003",
+        "name": "Crispy Chicken Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 199,
+        "match_confidence": 100
+      }
+    ],
+    "total": 527,
+    "upsell_accepted": false,
+    "language_detected": "Manual",
+    "status": "confirmed"
   }
 ]

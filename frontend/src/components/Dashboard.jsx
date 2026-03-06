@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useMemo } from 'react'
+import { createPortal } from 'react-dom'
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Cell, PieChart, Pie
@@ -72,13 +73,13 @@ export default function Dashboard({ onNavigate }) {
     const marginVal = useCountUp(avgMargin)
     const orderVal = useCountUp(127)
 
-    const hiddenStarItems = useMemo(() => data.filter(i => i.classification === 'Hidden Star').map(i => i.name), [data])
-    const riskItems = useMemo(() => data.filter(i => i.classification === 'Plowhorse').map(i => i.name), [data])
-    const [hoverCard, setHoverCard] = useState(null)
+    const hiddenStarItems = useMemo(() => data.filter(i => i.classification === 'Hidden Star'), [data])
+    const riskItems = useMemo(() => data.filter(i => i.classification === 'Plowhorse'), [data])
+    const [modalData, setModalData] = useState(null) // { title, icon, color, items }
 
     const statCards = [
-        { label: 'Hidden Stars Found', value: hiddenCount, icon: 'grade', color: 'orange', change: '+12%', up: true, tooltipItems: hiddenStarItems },
-        { label: 'Risk Items', value: riskCount, icon: 'warning', color: 'red', change: '-2%', up: false, tooltipItems: riskItems },
+        { label: 'Hidden Stars Found', value: hiddenCount, icon: 'grade', color: 'orange', change: '+12%', up: true, clickData: { title: 'Hidden Stars', icon: 'grade', color: '#f59e0b', items: hiddenStarItems } },
+        { label: 'Risk Items', value: riskCount, icon: 'warning', color: 'red', change: '-2%', up: false, clickData: { title: 'At-Risk Items (Plowhorses)', icon: 'warning', color: '#ef4444', items: riskItems } },
         { label: 'Avg Contribution Margin', value: `${marginVal}%`, icon: 'trending_up', color: 'green', change: '+5%', up: true },
         { label: 'Orders Today', value: orderVal, icon: 'shopping_bag', color: 'blue', change: '+18%', up: true },
     ]
@@ -95,9 +96,9 @@ export default function Dashboard({ onNavigate }) {
             {/* ─── Stat Cards ─── */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
                 {statCards.map(card => (
-                    <div key={card.label} className="glass-card stat-card" style={{ position: 'relative' }}
-                        onMouseEnter={() => setHoverCard(card.label)}
-                        onMouseLeave={() => setHoverCard(null)}>
+                    <div key={card.label} className="glass-card stat-card"
+                        style={{ position: 'relative', cursor: card.clickData ? 'pointer' : 'default' }}
+                        onClick={() => card.clickData && setModalData(card.clickData)}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                             <div className={`stat-icon ${card.color}`}>
                                 <span className="material-symbols-outlined fill-1">{card.icon}</span>
@@ -106,19 +107,69 @@ export default function Dashboard({ onNavigate }) {
                         </div>
                         <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-tertiary)', marginBottom: 4 }}>{card.label}</p>
                         <h3 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{card.value}</h3>
-
-                        {hoverCard === card.label && card.tooltipItems && card.tooltipItems.length > 0 && (
-                            <div className="animate-in" style={{ position: 'absolute', top: '100%', left: 0, marginTop: 12, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 16, zIndex: 100, width: 'max-content', maxWidth: 240, boxShadow: '0 12px 32px rgba(0,0,0,0.4)', pointerEvents: 'none' }}>
-                                <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Items in this category</p>
-                                <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 6 }}>
-                                    {card.tooltipItems.slice(0, 4).map(item => <li key={item} style={{ fontWeight: 500 }}>{item}</li>)}
-                                    {card.tooltipItems.length > 4 && <li><i style={{ color: 'var(--text-tertiary)' }}>+ {card.tooltipItems.length - 4} more items</i></li>}
-                                </ul>
-                            </div>
-                        )}
+                        {card.clickData && <p style={{ fontSize: 11, color: 'var(--primary)', marginTop: 8, fontWeight: 600 }}>Click to view details →</p>}
                     </div>
                 ))}
             </div>
+
+            {/* ─── Detail Modal (portal) ─── */}
+            {modalData && createPortal(
+                <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                    onClick={e => e.target === e.currentTarget && setModalData(null)}>
+                    <div style={{ background: 'white', borderRadius: 16, width: 640, maxHeight: '80vh', overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,0.2)' }}>
+                        {/* Header */}
+                        <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                <div style={{ width: 36, height: 36, borderRadius: 8, background: `${modalData.color}18`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    <span className="material-symbols-outlined fill-1" style={{ color: modalData.color, fontSize: 20 }}>{modalData.icon}</span>
+                                </div>
+                                <div>
+                                    <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>{modalData.title}</h3>
+                                    <p style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{modalData.items.length} items</p>
+                                </div>
+                            </div>
+                            <button onClick={() => setModalData(null)} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid var(--border-subtle)', background: 'white', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--text-tertiary)' }}>close</span>
+                            </button>
+                        </div>
+                        {/* Table */}
+                        <div style={{ maxHeight: 'calc(80vh - 70px)', overflowY: 'auto' }}>
+                            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                                <thead>
+                                    <tr style={{ background: 'var(--bg-elevated)', position: 'sticky', top: 0 }}>
+                                        <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Item Name</th>
+                                        <th style={{ padding: '10px 16px', textAlign: 'left', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Category</th>
+                                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Price</th>
+                                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Cost</th>
+                                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Margin</th>
+                                        <th style={{ padding: '10px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--text-tertiary)', fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Margin %</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {modalData.items.map((item, i) => (
+                                        <tr key={item.name} style={{ borderBottom: '1px solid var(--border-subtle)', background: i % 2 === 0 ? 'white' : '#fafafa' }}>
+                                            <td style={{ padding: '12px 16px', fontWeight: 600, color: 'var(--text-primary)' }}>{item.name}</td>
+                                            <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>
+                                                <span style={{ background: 'var(--bg-elevated)', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>{item.category}</span>
+                                            </td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>₹{item.selling_price}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', color: 'var(--text-secondary)' }}>₹{item.food_cost}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--accent-green)' }}>₹{item.margin}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right' }}>
+                                                <span style={{
+                                                    padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
+                                                    background: item.margin_pct >= 50 ? 'var(--accent-green-dim)' : item.margin_pct >= 30 ? 'var(--accent-orange-dim)' : 'var(--accent-red-dim)',
+                                                    color: item.margin_pct >= 50 ? 'var(--accent-green)' : item.margin_pct >= 30 ? '#d97706' : 'var(--accent-red)',
+                                                }}>{item.margin_pct}%</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                , document.body)}
 
             {/* ─── Charts Row ─── */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>

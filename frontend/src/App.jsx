@@ -7,6 +7,7 @@ import ComboEngine from './components/ComboEngine'
 import VoiceOrders from './components/VoiceOrders'
 import OrderHistory from './components/OrderHistory'
 import Settings from './components/Settings'
+import InventoryManager from './components/InventoryManager'
 import LandingPage from './components/LandingPage'
 
 const PAGE_TITLES = {
@@ -15,6 +16,7 @@ const PAGE_TITLES = {
   combos: 'Combo Engine',
   voice: 'Orders',
   history: 'Order History',
+  inventory: 'Inventory Manager',
   settings: 'Settings',
 }
 
@@ -85,6 +87,7 @@ export default function App() {
           {activePage === 'combos' && <ComboEngine />}
           {activePage === 'voice' && <VoiceOrders />}
           {activePage === 'history' && <OrderHistory />}
+          {activePage === 'inventory' && <InventoryManager />}
           {activePage === 'settings' && <Settings />}
         </div>
       </div>

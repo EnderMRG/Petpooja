@@ -14,6 +14,8 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
     const [submitting, setSubmitting] = useState(false)
     const [toast, setToast] = useState(null)
     const [deleteConfirm, setDeleteConfirm] = useState(null)
+    const [inventoryItems, setInventoryItems] = useState([])
+    const [recipeIngredients, setRecipeIngredients] = useState([])
 
     const showToast = (msg, ok = true) => {
         setToast({ msg, ok })
@@ -34,17 +36,49 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
 
     useEffect(() => { fetchItems() }, [fetchItems])
 
+    // Fetch inventory items for recipe dropdown
+    const fetchInventory = async () => {
+        try {
+            const res = await fetch('/inventory/items')
+            const data = await res.json()
+            setInventoryItems(data.items || [])
+        } catch (e) { console.error(e) }
+    }
+
+    const fetchRecipe = async (itemId) => {
+        try {
+            const res = await fetch(`/recipes/${itemId}`)
+            const data = await res.json()
+            setRecipeIngredients(data.ingredients || [])
+        } catch (e) { setRecipeIngredients([]) }
+    }
+
     const openAdd = () => {
         setEditItem(null)
         setForm({ name: '', category: 'Burgers', selling_price: '', food_cost: '', is_available: true })
+        setRecipeIngredients([])
+        fetchInventory()
         setShowModal(true)
     }
 
     const openEdit = (item) => {
         setEditItem(item)
         setForm({ name: item.name, category: item.category, selling_price: item.selling_price, food_cost: item.food_cost, is_available: item.is_available })
+        fetchInventory()
+        fetchRecipe(item.item_id)
         setShowModal(true)
     }
+
+    const addRecipeRow = () => setRecipeIngredients(r => [...r, { ingredient_id: '', name: '', qty: 0, unit: '' }])
+    const removeRecipeRow = (idx) => setRecipeIngredients(r => r.filter((_, i) => i !== idx))
+    const updateRecipeRow = (idx, field, val) => setRecipeIngredients(r => r.map((row, i) => {
+        if (i !== idx) return row
+        if (field === 'ingredient_id') {
+            const inv = inventoryItems.find(it => it.ingredient_id === val)
+            return { ...row, ingredient_id: val, name: inv?.name || '', unit: inv?.unit || '' }
+        }
+        return { ...row, [field]: field === 'qty' ? parseFloat(val) || 0 : val }
+    }))
 
     const handleSubmit = async () => {
         if (!form.name.trim() || !form.selling_price || !form.food_cost) {
@@ -54,13 +88,20 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
         setSubmitting(true)
         try {
             const body = { name: form.name.trim(), category: form.category, selling_price: +form.selling_price, food_cost: +form.food_cost, is_available: form.is_available }
+            let itemId = editItem?.item_id
             if (editItem) {
                 await fetch(`/menu/items/${editItem.item_id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-                showToast(`"${form.name}" updated`)
             } else {
-                await fetch('/menu/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
-                showToast(`"${form.name}" added to menu`)
+                const res = await fetch('/menu/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                const data = await res.json()
+                itemId = data.item?.item_id
             }
+            // Save recipe
+            if (itemId && recipeIngredients.length > 0) {
+                const validIngredients = recipeIngredients.filter(r => r.ingredient_id && r.qty > 0)
+                await fetch(`/recipes/${itemId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(validIngredients) })
+            }
+            showToast(editItem ? `"${form.name}" updated` : `"${form.name}" added to menu`)
             setShowModal(false)
             fetchItems()
         } catch {
@@ -248,6 +289,41 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
                                     onClick={() => setForm(f => ({ ...f, is_available: !f.is_available }))}>
                                     <div style={{ width: 20, height: 20, borderRadius: '50%', background: 'white', transform: form.is_available ? 'translateX(20px)' : 'translateX(0)', transition: 'transform 0.2s' }} />
                                 </button>
+                            </div>
+
+                            {/* ─── Recipe / BOM Section ─── */}
+                            <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 16, marginTop: 8 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: 18, color: 'var(--primary)' }}>menu_book</span>
+                                        <span style={{ fontSize: 14, fontWeight: 700, color: '#0f172a' }}>Recipe (BOM)</span>
+                                    </div>
+                                    <button onClick={addRecipeRow} style={{ fontSize: 12, fontWeight: 700, color: 'var(--primary)', background: 'var(--primary-dim)', border: '1px solid var(--primary)', borderRadius: 8, padding: '4px 10px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                                        <span className="material-symbols-outlined" style={{ fontSize: 14 }}>add</span> Add Ingredient
+                                    </button>
+                                </div>
+                                {recipeIngredients.length === 0 && (
+                                    <p style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic', textAlign: 'center', padding: '8px 0' }}>No ingredients added yet. Click "Add Ingredient" to build the recipe.</p>
+                                )}
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, maxHeight: 180, overflowY: 'auto' }}>
+                                    {recipeIngredients.map((row, idx) => (
+                                        <div key={idx} style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                                            <select value={row.ingredient_id} onChange={e => updateRecipeRow(idx, 'ingredient_id', e.target.value)}
+                                                style={{ ...inputStyle, flex: 2, fontSize: 12, padding: '8px 10px' }}>
+                                                <option value="">Select ingredient...</option>
+                                                {inventoryItems.map(inv => (
+                                                    <option key={inv.ingredient_id} value={inv.ingredient_id}>{inv.name} ({inv.unit})</option>
+                                                ))}
+                                            </select>
+                                            <input type="number" step="0.01" value={row.qty || ''} onChange={e => updateRecipeRow(idx, 'qty', e.target.value)}
+                                                placeholder="Qty" style={{ ...inputStyle, flex: 0.7, fontSize: 12, padding: '8px 10px', textAlign: 'right' }} />
+                                            <span style={{ fontSize: 11, color: '#94a3b8', minWidth: 30 }}>{row.unit}</span>
+                                            <button onClick={() => removeRecipeRow(idx)} style={{ padding: 4, border: 'none', background: 'none', cursor: 'pointer' }}>
+                                                <span className="material-symbols-outlined" style={{ fontSize: 16, color: '#ef4444' }}>close</span>
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
                             </div>
                         </div>
                         <div style={{ display: 'flex', gap: 12, marginTop: 24 }}>

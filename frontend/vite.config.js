@@ -7,6 +7,8 @@ export default defineConfig({
     proxy: {
       '/menu': 'http://localhost:8000',
       '/voice': 'http://localhost:8000',
+      '/inventory': 'http://localhost:8000',
+      '/recipes': 'http://localhost:8000',
     }
   }
 })

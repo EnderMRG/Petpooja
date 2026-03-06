@@ -5,6 +5,7 @@ export default function Sidebar({ activePage, onNavigate }) {
         { id: 'combos', label: 'Combo Engine', icon: 'extension' },
         { id: 'voice', label: 'Orders', icon: 'receipt_long' },
         { id: 'history', label: 'Order History', icon: 'history' },
+        { id: 'inventory', label: 'Inventory', icon: 'inventory_2' },
         { id: 'settings', label: 'Settings', icon: 'settings' },
     ]
 
@@ -12,8 +13,8 @@ export default function Sidebar({ activePage, onNavigate }) {
         <aside className="sidebar">
             {/* Logo */}
             <div className="sidebar-logo">
-                <div className="flame">
-                    <span className="material-symbols-outlined" style={{ fontSize: 20 }}>local_fire_department</span>
+                <div style={{ width: 42, height: 42, borderRadius: 10, background: '#fff3e0', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <img src="/petpoja.png" alt="Petpooja" style={{ width: 34, height: 34, objectFit: 'contain' }} />
                 </div>
                 <div>
                     <div className="brand-name">Petpooja</div>

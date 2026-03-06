@@ -1,0 +1,1385 @@
+{
+    "M001": {
+        "item_id": "M001",
+        "name": "Classic Veg Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING011",
+                "name": "Mayonnaise",
+                "qty": 0.015,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M002": {
+        "item_id": "M002",
+        "name": "Paneer Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING011",
+                "name": "Mayonnaise",
+                "qty": 0.015,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M003": {
+        "item_id": "M003",
+        "name": "Crispy Chicken Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.12,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING011",
+                "name": "Mayonnaise",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M004": {
+        "item_id": "M004",
+        "name": "Double Decker Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 2,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.2,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.04,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.04,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING011",
+                "name": "Mayonnaise",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M005": {
+        "item_id": "M005",
+        "name": "Spicy Aloo Tikki Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.04,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M006": {
+        "item_id": "M006",
+        "name": "BBQ Chicken Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.04,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M007": {
+        "item_id": "M007",
+        "name": "Mushroom Swiss Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING016",
+                "name": "Mushrooms (Button)",
+                "qty": 0.06,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING008",
+                "name": "Lettuce (Iceberg)",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M008": {
+        "item_id": "M008",
+        "name": "Tandoori Paneer Burger",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.04,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M009": {
+        "item_id": "M009",
+        "name": "Margherita Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M010": {
+        "item_id": "M010",
+        "name": "Paneer Tikka Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M011": {
+        "item_id": "M011",
+        "name": "Chicken Pepperoni Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.12,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M012": {
+        "item_id": "M012",
+        "name": "Farm Fresh Veggie Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING016",
+                "name": "Mushrooms (Button)",
+                "qty": 0.04,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M013": {
+        "item_id": "M013",
+        "name": "BBQ Chicken Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M014": {
+        "item_id": "M014",
+        "name": "Paneer Makhani Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M015": {
+        "item_id": "M015",
+        "name": "Cheese Burst Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M016": {
+        "item_id": "M016",
+        "name": "Mushroom Truffle Pizza",
+        "ingredients": [
+            {
+                "ingredient_id": "ING005",
+                "name": "Pizza Dough Base (12\")",
+                "qty": 1,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING016",
+                "name": "Mushrooms (Button)",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M017": {
+        "item_id": "M017",
+        "name": "Paneer Tikka",
+        "ingredients": [
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M018": {
+        "item_id": "M018",
+        "name": "Chicken Wings",
+        "ingredients": [
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.2,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.08,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M019": {
+        "item_id": "M019",
+        "name": "French Fries",
+        "ingredients": [
+            {
+                "ingredient_id": "ING006",
+                "name": "French Fries (Frozen)",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.02,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M020": {
+        "item_id": "M020",
+        "name": "Loaded Nachos",
+        "ingredients": [
+            {
+                "ingredient_id": "ING019",
+                "name": "Nachos (Packaged)",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.04,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M021": {
+        "item_id": "M021",
+        "name": "Garlic Bread",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 2,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M022": {
+        "item_id": "M022",
+        "name": "Stuffed Mushrooms",
+        "ingredients": [
+            {
+                "ingredient_id": "ING016",
+                "name": "Mushrooms (Button)",
+                "qty": 0.12,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M023": {
+        "item_id": "M023",
+        "name": "Spring Rolls",
+        "ingredients": [
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.06,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M024": {
+        "item_id": "M024",
+        "name": "Hara Bhara Kebab",
+        "ingredients": [
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.05,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M025": {
+        "item_id": "M025",
+        "name": "Chicken Seekh Kebab",
+        "ingredients": [
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.18,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M026": {
+        "item_id": "M026",
+        "name": "Crispy Corn",
+        "ingredients": [
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.01,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M027": {
+        "item_id": "M027",
+        "name": "Cold Coffee",
+        "ingredients": [
+            {
+                "ingredient_id": "ING012",
+                "name": "Coffee Powder",
+                "qty": 0.01,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.25,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M028": {
+        "item_id": "M028",
+        "name": "Mango Lassi",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.2,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M029": {
+        "item_id": "M029",
+        "name": "Fresh Lime Soda",
+        "ingredients": []
+    },
+    "M030": {
+        "item_id": "M030",
+        "name": "Masala Chai",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.15,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M031": {
+        "item_id": "M031",
+        "name": "Oreo Milkshake",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.3,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING020",
+                "name": "Ice Cream (Vanilla)",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M032": {
+        "item_id": "M032",
+        "name": "Mojito",
+        "ingredients": []
+    },
+    "M033": {
+        "item_id": "M033",
+        "name": "Strawberry Smoothie",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.2,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING020",
+                "name": "Ice Cream (Vanilla)",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M034": {
+        "item_id": "M034",
+        "name": "Hot Chocolate",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.25,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING014",
+                "name": "Chocolate Brownie Mix",
+                "qty": 0.02,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M035": {
+        "item_id": "M035",
+        "name": "Iced Tea",
+        "ingredients": []
+    },
+    "M036": {
+        "item_id": "M036",
+        "name": "Cappuccino",
+        "ingredients": [
+            {
+                "ingredient_id": "ING012",
+                "name": "Coffee Powder",
+                "qty": 0.012,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.2,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M037": {
+        "item_id": "M037",
+        "name": "Chocolate Brownie",
+        "ingredients": [
+            {
+                "ingredient_id": "ING014",
+                "name": "Chocolate Brownie Mix",
+                "qty": 0.08,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING020",
+                "name": "Ice Cream (Vanilla)",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M038": {
+        "item_id": "M038",
+        "name": "Gulab Jamun",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.03,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M039": {
+        "item_id": "M039",
+        "name": "Ice Cream Sundae",
+        "ingredients": [
+            {
+                "ingredient_id": "ING020",
+                "name": "Ice Cream (Vanilla)",
+                "qty": 0.15,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING014",
+                "name": "Chocolate Brownie Mix",
+                "qty": 0.02,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M040": {
+        "item_id": "M040",
+        "name": "Rasgulla",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.1,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M041": {
+        "item_id": "M041",
+        "name": "Cheesecake Slice",
+        "ingredients": [
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.06,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING014",
+                "name": "Chocolate Brownie Mix",
+                "qty": 0.03,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M042": {
+        "item_id": "M042",
+        "name": "Tiramisu",
+        "ingredients": [
+            {
+                "ingredient_id": "ING012",
+                "name": "Coffee Powder",
+                "qty": 0.008,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.04,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M043": {
+        "item_id": "M043",
+        "name": "Mango Kulfi",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.15,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M044": {
+        "item_id": "M044",
+        "name": "Rasmalai",
+        "ingredients": [
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.2,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M045": {
+        "item_id": "M045",
+        "name": "Chocolate Lava Cake",
+        "ingredients": [
+            {
+                "ingredient_id": "ING014",
+                "name": "Chocolate Brownie Mix",
+                "qty": 0.1,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING013",
+                "name": "Milk (Full Cream)",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M046": {
+        "item_id": "M046",
+        "name": "Peri Peri Fries",
+        "ingredients": [
+            {
+                "ingredient_id": "ING006",
+                "name": "French Fries (Frozen)",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.003,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M047": {
+        "item_id": "M047",
+        "name": "Cheese Garlic Bread",
+        "ingredients": [
+            {
+                "ingredient_id": "ING001",
+                "name": "Burger Buns",
+                "qty": 2,
+                "unit": "pcs"
+            },
+            {
+                "ingredient_id": "ING004",
+                "name": "Mozzarella Cheese",
+                "qty": 0.05,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING017",
+                "name": "Oregano Seasoning",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M048": {
+        "item_id": "M048",
+        "name": "Veg Manchurian",
+        "ingredients": [
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.03,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            }
+        ]
+    },
+    "M049": {
+        "item_id": "M049",
+        "name": "Chicken Lollipop",
+        "ingredients": [
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.2,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.06,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING007",
+                "name": "Tomato Sauce",
+                "qty": 0.02,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.003,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M050": {
+        "item_id": "M050",
+        "name": "Paneer 65",
+        "ingredients": [
+            {
+                "ingredient_id": "ING002",
+                "name": "Paneer (Fresh)",
+                "qty": 0.15,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.02,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.05,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.003,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING015",
+                "name": "Capsicum (Green)",
+                "qty": 0.02,
+                "unit": "kg"
+            }
+        ]
+    },
+    "M051": {
+        "item_id": "M051",
+        "name": "Mooglai Chicken",
+        "ingredients": [
+            {
+                "ingredient_id": "ING003",
+                "name": "Chicken Breast",
+                "qty": 0.2,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING009",
+                "name": "Onions",
+                "qty": 0.03,
+                "unit": "kg"
+            },
+            {
+                "ingredient_id": "ING010",
+                "name": "Cooking Oil",
+                "qty": 0.04,
+                "unit": "litre"
+            },
+            {
+                "ingredient_id": "ING018",
+                "name": "Chilli Flakes",
+                "qty": 0.002,
+                "unit": "kg"
+            }
+        ]
+    }
+}

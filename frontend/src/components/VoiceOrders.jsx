@@ -550,6 +550,35 @@ export default function VoiceOrders() {
                             <div className="kot-display">{confirmedOrder.kot}</div>
                         </div>
 
+                        {/* Stock Impact */}
+                        {confirmedOrder.inventory_impact && confirmedOrder.inventory_impact.depleted?.length > 0 && (
+                            <div className="glass-card" style={{ padding: 20 }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+                                    <span className="material-symbols-outlined" style={{ fontSize: 20, color: 'var(--primary)' }}>inventory_2</span>
+                                    <h4 style={{ fontSize: 14, fontWeight: 700 }}>Stock Impact</h4>
+                                </div>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                    {confirmedOrder.inventory_impact.depleted.map((d, i) => (
+                                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 10px', borderRadius: 8, background: '#f8fafc' }}>
+                                            <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>{d.name}</span>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                                <span style={{ fontSize: 12, color: '#ef4444', fontWeight: 600 }}>-{d.subtracted} {d.unit}</span>
+                                                <span style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>→ {d.remaining} {d.unit} left</span>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                {confirmedOrder.inventory_impact.stock_alerts?.length > 0 && (
+                                    <div style={{ marginTop: 12, padding: '10px 14px', borderRadius: 10, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', gap: 8 }}>
+                                        <span className="material-symbols-outlined" style={{ color: '#ef4444', fontSize: 18 }}>warning</span>
+                                        <span style={{ fontSize: 12, fontWeight: 700, color: '#ef4444' }}>
+                                            Low Stock Alert: {confirmedOrder.inventory_impact.stock_alerts.map(a => a.name).join(', ')}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
                         <button className="btn-outline" onClick={reset} style={{ width: '100%' }}>
                             ↩ Start New Order
                         </button>
