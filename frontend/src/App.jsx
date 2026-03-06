@@ -1,67 +1,57 @@
 import { useState } from 'react'
 import './index.css'
-import RevenueTable from './components/RevenueTable'
-import ComboSuggestions from './components/ComboSuggestions'
-import VoiceOrderPanel from './components/VoiceOrderPanel'
-
-const TABS = [
-  { id: 'revenue', label: '📊 Revenue Intelligence', icon: '📊' },
-  { id: 'voice', label: '🎙️ Voice Copilot', icon: '🎙️' },
-]
+import Sidebar from './components/Sidebar'
+import Dashboard from './pages/Dashboard'
+import MenuIntelligence from './pages/MenuIntelligence'
+import ComboEngine from './pages/ComboEngine'
+import VoiceOrders from './pages/VoiceOrders'
+import OrderHistory from './pages/OrderHistory'
 
 export default function App() {
-  const [activeTab, setActiveTab] = useState('revenue')
+  const [activePage, setActivePage] = useState('dashboard')
+
+  const pageLabels = {
+    dashboard: 'Dashboard',
+    menu: 'Menu Intelligence',
+    combo: 'Combo Engine',
+    voice: 'Voice Orders',
+    history: 'Order History',
+  }
 
   return (
-    <div className="min-h-screen px-4 py-6 md:px-8">
-      {/* ─── Header ─── */}
-      <header className="max-w-7xl mx-auto mb-8 animate-in">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 to-blue-500 flex items-center justify-center text-lg shadow-lg">
-            🍽️
+    <div className="flex min-h-screen">
+      {/* Sidebar */}
+      <Sidebar activePage={activePage} onPageChange={setActivePage} />
+
+      {/* Main Content */}
+      <main className="ml-64 flex-1 bg-gradient-to-b from-slate-950 to-slate-900 overflow-y-auto">
+        {/* Top Bar */}
+        <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur-sm">
+          <div className="flex items-center justify-between px-8 py-4">
+            <h1 className="text-2xl font-bold text-white">{pageLabels[activePage]}</h1>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-green-500/10 border border-green-500/20">
+                <span className="h-2 w-2 rounded-full bg-green-500 pulse-badge" />
+                <span className="text-xs font-semibold text-green-400">Live Demo</span>
+              </div>
+              <button className="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors">
+                ⟲ Refresh
+              </button>
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold gradient-text">
-              Petpooja AI Copilot
-            </h1>
-            <p className="text-sm text-slate-400">
-              Revenue Intelligence & Voice Ordering for Restaurants
-            </p>
+        </header>
+
+        {/* Page Content */}
+        <div className="p-8">
+          <div className="animate-in" key={activePage}>
+            {activePage === 'dashboard' && <Dashboard />}
+            {activePage === 'menu' && <MenuIntelligence />}
+            {activePage === 'combo' && <ComboEngine />}
+            {activePage === 'voice' && <VoiceOrders />}
+            {activePage === 'history' && <OrderHistory />}
           </div>
         </div>
-      </header>
-
-      {/* ─── Tab Navigation ─── */}
-      <nav className="max-w-7xl mx-auto mb-8 animate-in" style={{ animationDelay: '0.1s' }}>
-        <div className="flex gap-3">
-          {TABS.map(tab => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`px-6 py-3 rounded-xl font-semibold text-sm transition-all duration-300 cursor-pointer ${activeTab === tab.id ? 'tab-active' : 'tab-inactive'
-                }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-      </nav>
-
-      {/* ─── Content ─── */}
-      <main className="max-w-7xl mx-auto animate-in" style={{ animationDelay: '0.2s' }}>
-        {activeTab === 'revenue' && (
-          <div className="space-y-8">
-            <RevenueTable />
-            <ComboSuggestions />
-          </div>
-        )}
-        {activeTab === 'voice' && <VoiceOrderPanel />}
       </main>
-
-      {/* ─── Footer ─── */}
-      <footer className="max-w-7xl mx-auto mt-12 py-6 text-center text-xs text-slate-500 border-t border-slate-800">
-        Petpooja AI Copilot — Built for Hackathon 2025 · Revenue Intelligence + Voice Ordering
-      </footer>
     </div>
   )
 }

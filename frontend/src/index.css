@@ -1,20 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
 /* ─── Design Tokens ─── */
 :root {
-  --bg-primary: #0f0f1a;
+  --bg-primary: #0F1117;
   --bg-secondary: #1a1a2e;
   --bg-card: #16213e;
-  --bg-glass: rgba(22, 33, 62, 0.7);
+  --bg-glass: rgba(15, 17, 23, 0.8);
+  --accent-primary: #FF6B35;
+  --accent-success: #10B981;
+  --accent-danger: #EF4444;
+  --accent-info: #3b82f6;
   --accent-purple: #7c3aed;
   --accent-blue: #3b82f6;
   --accent-cyan: #06b6d4;
   --accent-emerald: #10b981;
   --accent-amber: #f59e0b;
   --accent-rose: #f43f5e;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
+  --text-primary: #F1F5F9;
+  --text-secondary: #94A3B8;
   --border-subtle: rgba(148, 163, 184, 0.12);
+  --glow-orange: 0 0 20px rgba(255, 107, 53, 0.3);
   --glow-purple: 0 0 20px rgba(124, 58, 237, 0.3);
   --glow-blue: 0 0 20px rgba(59, 130, 246, 0.3);
 }
@@ -27,11 +33,16 @@
 }
 
 body {
-  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 700;
 }
 
 /* ─── Animated gradient background ─── */
@@ -174,4 +185,61 @@ body::before {
 }
 .animate-in {
   animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* ─── Stat counter animation ─── */
+@keyframes counterAnimate {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.stat-counter {
+  animation: counterAnimate 0.8s cubic-bezier(0.23, 1, 0.320, 1);
+}
+
+/* ─── Pulsing badge ─── */
+@keyframes pulse-badge {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.pulse-badge {
+  animation: pulse-badge 2s ease-in-out infinite;
+}
+
+/* ─── Scale hover effect ─── */
+.hover-scale {
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* ─── Responsive Layout ─── */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  .glass-card {
+    padding: 16px;
+  }
+
+  h1, h2 {
+    font-size: 20px;
+  }
+}
+
+/* ─── Glass card enhancement with orange glow ─── */
+.glass-card {
+  background: rgba(15, 17, 23, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 107, 53, 0.1);
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 107, 53, 0.25);
+  box-shadow: var(--glow-orange);
 }
