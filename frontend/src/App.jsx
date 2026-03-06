@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, Component } from 'react'
 import './index.css'
 import Sidebar from './components/Sidebar'
 import Dashboard from './components/Dashboard'
@@ -13,9 +13,35 @@ const PAGE_TITLES = {
   dashboard: 'Dashboard',
   menu: 'Menu Intelligence',
   combos: 'Combo Engine',
-  voice: 'Voice Orders',
+  voice: 'Orders',
   history: 'Order History',
   settings: 'Settings',
+}
+
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { hasError: false, error: null }
+  }
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error }
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ padding: 40, textAlign: 'center', fontFamily: 'Inter, sans-serif' }}>
+          <h2 style={{ color: '#ef4444', marginBottom: 12 }}>Something went wrong</h2>
+          <pre style={{ background: '#f8f7f5', padding: 16, borderRadius: 8, fontSize: 13, textAlign: 'left', overflow: 'auto', maxWidth: 600, margin: '0 auto' }}>
+            {this.state.error?.toString()}
+          </pre>
+          <button onClick={() => window.location.reload()} style={{ marginTop: 16, padding: '10px 24px', borderRadius: 8, background: '#f97415', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 700 }}>
+            Reload App
+          </button>
+        </div>
+      )
+    }
+    return this.props.children
+  }
 }
 
 export default function App() {
@@ -30,7 +56,7 @@ export default function App() {
   }
 
   return (
-    <>
+    <ErrorBoundary>
       <Sidebar activePage={activePage} onNavigate={setActivePage} />
 
       <div className="main-content">
@@ -62,6 +88,6 @@ export default function App() {
           {activePage === 'settings' && <Settings />}
         </div>
       </div>
-    </>
+    </ErrorBoundary>
   )
 }

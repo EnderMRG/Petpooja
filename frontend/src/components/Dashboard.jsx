@@ -72,6 +72,17 @@ export default function Dashboard({ onNavigate }) {
     const marginVal = useCountUp(avgMargin)
     const orderVal = useCountUp(127)
 
+    const hiddenStarItems = useMemo(() => data.filter(i => i.classification === 'Hidden Star').map(i => i.name), [data])
+    const riskItems = useMemo(() => data.filter(i => i.classification === 'Plowhorse').map(i => i.name), [data])
+    const [hoverCard, setHoverCard] = useState(null)
+
+    const statCards = [
+        { label: 'Hidden Stars Found', value: hiddenCount, icon: 'grade', color: 'orange', change: '+12%', up: true, tooltipItems: hiddenStarItems },
+        { label: 'Risk Items', value: riskCount, icon: 'warning', color: 'red', change: '-2%', up: false, tooltipItems: riskItems },
+        { label: 'Avg Contribution Margin', value: `${marginVal}%`, icon: 'trending_up', color: 'green', change: '+5%', up: true },
+        { label: 'Orders Today', value: orderVal, icon: 'shopping_bag', color: 'blue', change: '+18%', up: true },
+    ]
+
     if (loading) return (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 400 }}>
             <div style={{ width: 32, height: 32, border: '3px solid var(--primary)', borderTopColor: 'transparent', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
@@ -79,19 +90,14 @@ export default function Dashboard({ onNavigate }) {
         </div>
     )
 
-    const statCards = [
-        { label: 'Hidden Stars Found', value: hiddenCount, icon: 'grade', color: 'orange', change: '+12%', up: true },
-        { label: 'Risk Items', value: riskCount, icon: 'warning', color: 'red', change: '-2%', up: false },
-        { label: 'Avg Contribution Margin', value: `${marginVal}%`, icon: 'trending_up', color: 'green', change: '+5%', up: true },
-        { label: 'Orders Today', value: orderVal, icon: 'shopping_bag', color: 'blue', change: '+18%', up: true },
-    ]
-
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
             {/* ─── Stat Cards ─── */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
                 {statCards.map(card => (
-                    <div key={card.label} className="glass-card stat-card">
+                    <div key={card.label} className="glass-card stat-card" style={{ position: 'relative' }}
+                        onMouseEnter={() => setHoverCard(card.label)}
+                        onMouseLeave={() => setHoverCard(null)}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
                             <div className={`stat-icon ${card.color}`}>
                                 <span className="material-symbols-outlined fill-1">{card.icon}</span>
@@ -100,6 +106,16 @@ export default function Dashboard({ onNavigate }) {
                         </div>
                         <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-tertiary)', marginBottom: 4 }}>{card.label}</p>
                         <h3 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{card.value}</h3>
+
+                        {hoverCard === card.label && card.tooltipItems && card.tooltipItems.length > 0 && (
+                            <div className="animate-in" style={{ position: 'absolute', top: '100%', left: 0, marginTop: 12, background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 16, zIndex: 100, width: 'max-content', maxWidth: 240, boxShadow: '0 12px 32px rgba(0,0,0,0.4)', pointerEvents: 'none' }}>
+                                <p style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-tertiary)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 12 }}>Items in this category</p>
+                                <ul style={{ margin: 0, paddingLeft: 16, fontSize: 13, color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                                    {card.tooltipItems.slice(0, 4).map(item => <li key={item} style={{ fontWeight: 500 }}>{item}</li>)}
+                                    {card.tooltipItems.length > 4 && <li><i style={{ color: 'var(--text-tertiary)' }}>+ {card.tooltipItems.length - 4} more items</i></li>}
+                                </ul>
+                            </div>
+                        )}
                     </div>
                 ))}
             </div>
