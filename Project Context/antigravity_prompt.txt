@@ -1,0 +1,161 @@
+Build a full-stack AI-powered Revenue & Voice Copilot system for restaurants using PoS data. The project has two core modules.
+
+## Project Overview
+A hackathon project that turns raw restaurant PoS (Point of Sale) transaction data into intelligent revenue decisions and automates phone-based voice ordering.
+
+---
+
+## Tech Stack
+- Backend: Python + FastAPI
+- Analytics: pandas, mlxtend (Apriori for combos)
+- Speech-to-Text: OpenAI Whisper (local, multilingual — no external API calls)
+- NLP: rapidfuzz for menu item matching, spaCy or regex for modifier extraction
+- Frontend: React + Tailwind CSS
+- Data: Mock PoS JSON dataset (generate realistic sample data)
+
+---
+
+## Module 1 — Revenue Intelligence & Menu Optimization Engine
+
+Build a FastAPI backend with the following endpoints and logic:
+
+1. Contribution Margin Analysis
+   - Calculate (selling_price - food_cost) for each menu item
+   - Rank items by margin
+
+2. Sales Velocity & Popularity Scoring
+   - Classify items as: Fast Mover, Slow Seller, Moderate
+   - Based on order frequency from PoS transaction history
+
+3. Menu Matrix Classification
+   - Classify every item into one of 4 categories:
+     - Stars (high margin + high popularity)
+     - Hidden Stars (high margin + low popularity) — key insight
+     - Plowhorses (low margin + high popularity) — risk items
+     - Dogs (low margin + low popularity)
+
+4. Combo / Bundle Recommendation Engine
+   - Use Apriori association rule mining (mlxtend library) on transaction data
+   - Recommend item bundles that frequently appear together
+   - Prioritize combos that include Hidden Star items to boost their visibility
+
+5. Price Optimization Suggestions
+   - Rule-based: if an item is a Plowhorse (high volume, low margin), suggest a price increase
+   - If a Hidden Star has low order count, suggest a promotional price or combo deal
+
+6. API Endpoints needed:
+   - GET /menu/analysis — full item-level profitability matrix
+   - GET /menu/hidden-stars — under-promoted high margin items
+   - GET /menu/combos — recommended bundles
+   - GET /menu/risks — low-margin high-volume items
+   - GET /menu/price-suggestions — pricing recommendations
+
+---
+
+## Module 2 — AI Voice Ordering Copilot
+
+Build a voice ordering pipeline with NO external AI APIs. Everything runs locally.
+
+1. Speech-to-Text
+   - Use OpenAI Whisper (whisper Python library, medium or base multilingual model)
+   - Accept audio input (WAV or MP3)
+   - Support English, Hindi, and Hinglish transcription
+
+2. Intent Recognition & Item Mapping
+   - Parse transcription to extract: item names, quantities, modifiers (size, spice, add-ons)
+   - Use rapidfuzz to fuzzy-match spoken item names against the PoS menu database
+   - Handle common Hinglish patterns like "ek paneer burger dena" or "two veg pizza chahiye"
+
+3. Modifier Handling
+   - Extract customizations: size (small/medium/large), spice (mild/medium/spicy), extras (cheese, sauce)
+   - Use regex + keyword matching
+
+4. Upsell Integration
+   - After item mapping, query Module 1's combo engine to suggest a relevant upsell
+   - Example: "You ordered a burger — would you also like fries and a drink at a combo price?"
+   - Upsell should prioritize Hidden Star items
+
+5. Ambiguity Clarification
+   - If a spoken item matches multiple menu items (confidence below 80%), return a clarification prompt
+   - Example: "Did you mean Paneer Tikka Pizza or Paneer Makhani Pizza?"
+
+6. Order Confirmation & JSON Generation
+   - Generate a structured JSON order in this format:
+     {
+       "order_id": "ORD-001",
+       "items": [
+         {"item_id": "M042", "name": "Paneer Burger", "qty": 2, "modifiers": ["extra cheese"], "price": 180}
+       ],
+       "total": 360,
+       "upsell_accepted": false,
+       "language_detected": "Hinglish"
+     }
+   - Simulate PoS push by saving to a local orders database
+   - Auto-generate a KOT (Kitchen Order Ticket) as a printable text output
+
+7. API Endpoints needed:
+   - POST /voice/transcribe — accepts audio file, returns transcription
+   - POST /voice/parse-order — accepts transcription text, returns mapped order JSON
+   - POST /voice/confirm-order — finalizes order, pushes to PoS, generates KOT
+   - GET /voice/orders — list of all placed orders
+
+---
+
+## Mock Data Requirements
+
+Generate a realistic mock PoS dataset with:
+- 40 to 50 menu items across categories: Burgers, Pizzas, Starters, Beverages, Desserts
+- Each item has: item_id, name, category, selling_price, food_cost, is_available
+- 500 to 1000 transaction records with: order_id, timestamp, items_ordered (list of item_ids + qty)
+- Ensure variety so the Apriori algorithm finds meaningful associations
+
+---
+
+## Frontend Dashboard (React)
+
+Build a clean dashboard with two sections:
+
+Section 1 — Revenue Intelligence
+- Table showing all menu items with margin, velocity, and category (Star / Hidden Star / Plowhorse / Dog) with color coding
+- Cards showing: Total Hidden Stars, High Risk Items, Top Combo Suggestions
+- Simple bar chart showing top 10 items by contribution margin
+
+Section 2 — Voice Order Monitor
+- Upload audio file button — triggers transcription — shows parsed order
+- Display live order JSON with item names, quantities, modifiers
+- Show upsell suggestion if applicable
+- Confirm order button — shows generated KOT
+
+---
+
+## Project Structure
+
+petpooja-copilot/
+├── backend/
+│   ├── main.py                  # FastAPI app
+│   ├── data/
+│   │   ├── menu.json            # Mock menu data
+│   │   └── transactions.json    # Mock PoS transactions
+│   ├── modules/
+│   │   ├── revenue_engine.py    # Module 1 logic
+│   │   └── voice_copilot.py     # Module 2 logic
+│   └── requirements.txt
+├── frontend/
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── components/
+│   │   │   ├── RevenueTable.jsx
+│   │   │   ├── ComboSuggestions.jsx
+│   │   │   └── VoiceOrderPanel.jsx
+│   └── package.json
+└── README.md
+
+---
+
+## Important Constraints
+- Do NOT use OpenAI GPT API, Gemini API, or any external LLM API for the voice or NLP pipeline
+- Whisper runs fully locally — this is the custom NLP pipeline requirement
+- All ML/analytics logic must be explainable and demo-able in under 2 minutes
+- The app must run locally without any paid cloud services
+
+Start by generating the mock data, then build Module 1 backend, then Module 2 backend, then wire up the React frontend.

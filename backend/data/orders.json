@@ -1,0 +1,28 @@
+[
+  {
+    "order_id": "ORD-67C8F6",
+    "timestamp": "2026-03-06T08:53:24.294989",
+    "items": [
+      {
+        "item_id": "M002",
+        "name": "Paneer Burger",
+        "qty": 1,
+        "modifiers": [],
+        "price": 179,
+        "match_confidence": 84.61538461538461
+      },
+      {
+        "item_id": "M019",
+        "name": "French Fries",
+        "qty": 2,
+        "modifiers": [],
+        "price": 99,
+        "match_confidence": 83.33333333333334
+      }
+    ],
+    "total": 377,
+    "upsell_accepted": false,
+    "language_detected": "Hinglish",
+    "status": "confirmed"
+  }
+]
