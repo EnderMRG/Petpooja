@@ -10,55 +10,311 @@ import tempfile
 import uuid
 import urllib.request
 import urllib.error
-from datetime import datetime
+from datetime import datetime, date
 
-from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi import FastAPI, File, UploadFile, HTTPException, Request, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional
+import psycopg2
+import psycopg2.extras
+from psycopg2 import pool
+from dotenv import load_dotenv
 
 from modules import revenue_engine, voice_copilot
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "data")
-MENU_FILE = os.path.join(DATA_DIR, "menu.json")
-RECIPE_FILE = os.path.join(DATA_DIR, "recipes.json")
-SUPPLIER_FILE = os.path.join(DATA_DIR, "suppliers.json")
-RESTOCK_LOG_FILE = os.path.join(DATA_DIR, "restock_log.json")
+load_dotenv()
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+# ═══════════════════════════════════════════════
+# DB Connection Pool
+# ═══════════════════════════════════════════════
+try:
+    _pool = psycopg2.pool.SimpleConnectionPool(1, 10, DATABASE_URL)
+    print("✅ Connected to NeonDB")
+except Exception as e:
+    _pool = None
+    print(f"⚠ Could not connect to DB: {e}")
 
 
-def _load_menu_file() -> list:
-    with open(MENU_FILE, encoding="utf-8") as f:
-        return json.load(f)
+def _get_conn():
+    if not _pool:
+        raise HTTPException(500, "Database not connected")
+    return _pool.getconn()
 
 
-def _save_menu_file(data: list):
-    with open(MENU_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+def _put_conn(conn):
+    if _pool and conn:
+        _pool.putconn(conn)
 
 
-def _load_recipes() -> dict:
-    with open(RECIPE_FILE, encoding="utf-8") as f:
-        return json.load(f)
+def _db_fetch_all(sql, params=()) -> list:
+    """Run a SELECT and return all rows as dicts."""
+    conn = _get_conn()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            return [dict(r) for r in cur.fetchall()]
+    finally:
+        _put_conn(conn)
 
 
-def _save_recipes(data: dict):
-    with open(RECIPE_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+def _db_fetch_one(sql, params=()) -> Optional[dict]:
+    """Run a SELECT and return the first row as dict or None."""
+    conn = _get_conn()
+    try:
+        with conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor) as cur:
+            cur.execute(sql, params)
+            row = cur.fetchone()
+            return dict(row) if row else None
+    finally:
+        _put_conn(conn)
 
 
-def _load_suppliers() -> dict:
-    with open(SUPPLIER_FILE, encoding="utf-8") as f:
-        return json.load(f)
+def _db_execute(sql, params=()):
+    """Run INSERT/UPDATE/DELETE and commit."""
+    conn = _get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(sql, params)
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        _put_conn(conn)
 
 
-def _load_restock_log() -> list:
-    with open(RESTOCK_LOG_FILE, encoding="utf-8") as f:
-        return json.load(f)
+# ── RID helper (X-Restaurant-ID header) ──────────────────────────────
+def _get_rid(x_restaurant_id: str | None = Header(default=None)) -> str | None:
+    return x_restaurant_id or "demo"
 
 
-def _save_restock_log(data: list):
-    with open(RESTOCK_LOG_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
+# ═══════════════════════════════════════════════
+# DB-backed data helpers  (replace JSON I/O)
+# ═══════════════════════════════════════════════
+
+def _load_menu_file(restaurant_id: str | None = None) -> list:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all(
+        "SELECT item_id, name, category, selling_price, food_cost, is_available "
+        "FROM menu_items WHERE restaurant_id=%s ORDER BY item_id",
+        (rid,)
+    )
+    return [{"item_id": r["item_id"], "name": r["name"], "category": r["category"],
+             "selling_price": float(r["selling_price"]), "food_cost": float(r["food_cost"]),
+             "is_available": r["is_available"]} for r in rows]
+
+
+def _save_menu_item_db(item: dict, restaurant_id: str = "demo"):
+    _db_execute(
+        "INSERT INTO menu_items (item_id, restaurant_id, name, category, selling_price, food_cost, is_available) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s) "
+        "ON CONFLICT (item_id, restaurant_id) DO UPDATE SET "
+        "name=EXCLUDED.name, category=EXCLUDED.category, selling_price=EXCLUDED.selling_price, "
+        "food_cost=EXCLUDED.food_cost, is_available=EXCLUDED.is_available",
+        (item["item_id"], restaurant_id, item["name"], item["category"],
+         item["selling_price"], item["food_cost"], item.get("is_available", True))
+    )
+
+
+def _save_menu_file(data: list, restaurant_id: str | None = None):
+    rid = restaurant_id or "demo"
+    for item in data:
+        _save_menu_item_db(item, rid)
+
+
+def _load_recipes(restaurant_id: str | None = None) -> dict:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all(
+        "SELECT r.item_id, m.name as item_name, r.ingredient_id, r.ingredient_name, r.qty, r.unit "
+        "FROM recipes r LEFT JOIN menu_items m ON r.item_id=m.item_id AND r.restaurant_id=m.restaurant_id "
+        "WHERE r.restaurant_id=%s",
+        (rid,)
+    )
+    result = {}
+    for r in rows:
+        iid = r["item_id"]
+        if iid not in result:
+            result[iid] = {"item_id": iid, "name": r["item_name"] or iid, "ingredients": []}
+        result[iid]["ingredients"].append({
+            "ingredient_id": r["ingredient_id"],
+            "name": r["ingredient_name"],
+            "qty": float(r["qty"]),
+            "unit": r["unit"]
+        })
+    return result
+
+
+def _save_recipes(data: dict, restaurant_id: str | None = None):
+    rid = restaurant_id or "demo"
+    conn = _get_conn()
+    try:
+        with conn.cursor() as cur:
+            for item_id, recipe in data.items():
+                cur.execute("DELETE FROM recipes WHERE item_id=%s AND restaurant_id=%s", (item_id, rid))
+                for ing in recipe.get("ingredients", []):
+                    cur.execute(
+                        "INSERT INTO recipes (item_id, restaurant_id, ingredient_id, ingredient_name, qty, unit) "
+                        "VALUES (%s,%s,%s,%s,%s,%s)",
+                        (item_id, rid, ing["ingredient_id"], ing.get("name"), ing.get("qty", 0), ing.get("unit"))
+                    )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        _put_conn(conn)
+
+
+def _load_inventory(restaurant_id: str | None = None) -> list:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all(
+        "SELECT ingredient_id, name, category, unit, current_stock, min_stock, cost_per_unit, supplier, last_restocked "
+        "FROM inventory WHERE restaurant_id=%s ORDER BY ingredient_id",
+        (rid,)
+    )
+    return [{
+        "ingredient_id": r["ingredient_id"],
+        "name": r["name"],
+        "category": r["category"],
+        "unit": r["unit"],
+        "current_stock": float(r["current_stock"]),
+        "min_stock": float(r["min_stock"]),
+        "cost_per_unit": float(r["cost_per_unit"]),
+        "supplier": r["supplier"] or "",
+        "last_restocked": str(r["last_restocked"]) if r["last_restocked"] else None,
+    } for r in rows]
+
+
+def _save_inventory(data: list, restaurant_id: str | None = None):
+    rid = restaurant_id or "demo"
+    conn = _get_conn()
+    try:
+        with conn.cursor() as cur:
+            for item in data:
+                cur.execute(
+                    "UPDATE inventory SET current_stock=%s, cost_per_unit=%s, last_restocked=%s "
+                    "WHERE ingredient_id=%s AND restaurant_id=%s",
+                    (item["current_stock"], item["cost_per_unit"], item.get("last_restocked"), item["ingredient_id"], rid)
+                )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        _put_conn(conn)
+
+
+def _load_suppliers(restaurant_id: str | None = None) -> dict:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all("SELECT name, contact, categories FROM suppliers WHERE restaurant_id=%s", (rid,))
+    return {r["name"]: {"contact": r["contact"], "categories": r["categories"] or []} for r in rows}
+
+
+def _load_restock_log(restaurant_id: str | None = None) -> list:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all(
+        "SELECT id, ingredient_id, name, quantity, unit, cost_per_unit, total_cost, supplier, created_at "
+        "FROM restock_log WHERE restaurant_id=%s ORDER BY created_at DESC",
+        (rid,)
+    )
+    return [{
+        "id": r["id"],
+        "ingredient_id": r["ingredient_id"],
+        "ingredient_name": r["name"],
+        "qty_requested": float(r["quantity"]),
+        "unit": r["unit"],
+        "cost_per_unit": float(r["cost_per_unit"]),
+        "total_cost": float(r["total_cost"]),
+        "supplier": r["supplier"],
+        "sent_at": r["created_at"].isoformat() if r["created_at"] else None,
+    } for r in rows]
+
+
+def _save_restock_log(log: list, restaurant_id: str | None = None):
+    """Append only the last entry to the DB (avoids duplicate inserts)."""
+    if not log:
+        return
+    rid = restaurant_id or "demo"
+    entry = log[-1]  # only the newest entry needs inserting
+    _db_execute(
+        "INSERT INTO restock_log (restaurant_id, ingredient_id, name, quantity, unit, cost_per_unit, total_cost, supplier) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
+        (rid, entry.get("ingredient_id"), entry.get("ingredient_name", entry.get("name","")),
+         entry.get("qty_requested", entry.get("quantity", 0)), entry.get("unit"),
+         entry.get("cost_per_unit", 0), entry.get("total_cost", 0), entry.get("supplier"))
+    )
+
+
+# ── Users / Auth (from DB) ────────────────────────────────────────────
+def _load_users() -> dict:
+    rows = _db_fetch_all("SELECT restaurant_id, restaurant_name, owner_name, email, password, roles FROM restaurants")
+    if not rows:
+        return {"is_setup": False, "restaurants": []}
+    restaurants = [{
+        "restaurant_id": r["restaurant_id"],
+        "restaurant_name": r["restaurant_name"],
+        "owner_name": r["owner_name"],
+        "email": r["email"],
+        "password": r["password"],
+        "roles": r["roles"] if isinstance(r["roles"], dict) else json.loads(r["roles"] or "{}")
+    } for r in rows]
+    return {"is_setup": True, "restaurants": restaurants}
+
+
+def _save_users(data: dict):
+    """Upsert all restaurants in the users structure."""
+    for r in data.get("restaurants", []):
+        _db_execute(
+            "INSERT INTO restaurants (restaurant_id, restaurant_name, owner_name, email, password, roles) "
+            "VALUES (%s,%s,%s,%s,%s,%s) "
+            "ON CONFLICT (restaurant_id) DO UPDATE SET "
+            "restaurant_name=EXCLUDED.restaurant_name, owner_name=EXCLUDED.owner_name, "
+            "email=EXCLUDED.email, password=EXCLUDED.password, roles=EXCLUDED.roles",
+            (r.get("restaurant_id","demo"), r["restaurant_name"], r.get("owner_name",""),
+             r.get("email"), r.get("password"), json.dumps(r.get("roles",{})))
+        )
+
+
+# ── Orders (from DB) ─────────────────────────────────────────────────
+def _load_orders_file(restaurant_id: str | None = None) -> list:
+    rid = restaurant_id or "demo"
+    rows = _db_fetch_all(
+        "SELECT order_id, created_at, order_status, items, total_amount FROM orders "
+        "WHERE restaurant_id=%s ORDER BY created_at DESC",
+        (rid,)
+    )
+    return [{
+        "order_id": r["order_id"],
+        "timestamp": r["created_at"].isoformat() if r["created_at"] else None,
+        "status": r["order_status"],
+        "items": r["items"] if isinstance(r["items"], list) else json.loads(r["items"] or "[]"),
+        "total": float(r["total_amount"]) if r["total_amount"] else 0,
+    } for r in rows]
+
+
+def _save_orders_file(data: list, restaurant_id: str | None = None):
+    rid = restaurant_id or "demo"
+    conn = _get_conn()
+    try:
+        with conn.cursor() as cur:
+            for o in data:
+                cur.execute(
+                    "INSERT INTO orders (order_id, restaurant_id, created_at, order_status, items, total_amount) "
+                    "VALUES (%s,%s,%s,%s,%s,%s) "
+                    "ON CONFLICT (order_id, restaurant_id) DO UPDATE SET "
+                    "order_status=EXCLUDED.order_status, items=EXCLUDED.items",
+                    (o.get("order_id"), rid, o.get("timestamp"), o.get("status","received"),
+                     json.dumps(o.get("items",[])), o.get("total",0))
+                )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        _put_conn(conn)
+
 
 app = FastAPI(
     title="Petpooja AI Copilot",
@@ -77,25 +333,227 @@ app.add_middleware(
 
 
 # ═══════════════════════════════════════════════
+# Auth & Setup Endpoints
+# ═══════════════════════════════════════════════
+
+class SetupRequest(BaseModel):
+    restaurant_name: str
+    owner_name: str
+    email: str
+    password: str
+    manager_pin: str
+
+class LoginRequest(BaseModel):
+    pin: Optional[str] = None
+    email: Optional[str] = None
+    password: Optional[str] = None
+
+class UpdateRolesRequest(BaseModel):
+    manager_pin: Optional[str] = None
+    cashier_pin: Optional[str] = None
+    kitchen_pin: Optional[str] = None
+
+@app.get("/auth/restaurants")
+def list_restaurants():
+    """Return all restaurants (public info only) for the login restaurant picker."""
+    rows = _db_fetch_all(
+        "SELECT restaurant_id, restaurant_name, owner_name FROM restaurants ORDER BY restaurant_name"
+    )
+    return {"restaurants": rows}
+
+@app.get("/auth/status")
+def auth_status():
+    """Check if any restaurant has been set up yet."""
+    rows = _db_fetch_all("SELECT restaurant_id FROM restaurants")
+    return {"is_setup": len(rows) > 0}
+
+
+@app.post("/auth/setup")
+def auth_setup(req: SetupRequest):
+    """Create a new restaurant account."""
+    users = _load_users()
+    restaurants = users.get("restaurants", [])
+    if not restaurants and users.get("is_setup"):
+        # Safe migration — copy fields, don't reference `users` itself to avoid circular ref
+        restaurants = [{
+            "restaurant_id": "legacy",
+            "restaurant_name": users.get("restaurant_name", ""),
+            "owner_name": users.get("owner_name", ""),
+            "email": None, "password": None,
+            "roles": users.get("roles", {})
+        }]
+        
+    for r in restaurants:
+        if r.get("email") and r.get("email") == req.email:
+            raise HTTPException(400, "Email already in use. Please log in instead.")
+
+    new_res = {
+        "restaurant_id": str(uuid.uuid4()),
+        "restaurant_name": req.restaurant_name,
+        "owner_name": req.owner_name,
+        "email": req.email,
+        "password": req.password,
+        "roles": {
+            "manager": {"pin": req.manager_pin, "label": "Manager"},
+            "cashier": {"pin": "2222", "label": "Cashier"},
+            "kitchen": {"pin": "3333", "label": "Kitchen"},
+        }
+    }
+    
+    # Save as clean top-level document — no circular references
+    _save_users({"is_setup": True, "restaurants": restaurants + [new_res]})
+    return {
+        "success": True, 
+        "message": f"Restaurant '{req.restaurant_name}' created.", 
+        "role": "manager",
+        "restaurant_name": req.restaurant_name,
+        "owner_name": req.owner_name,
+        "label": "Manager"
+    }
+
+@app.post("/auth/login")
+def auth_login(req: LoginRequest):
+    """Validate Email/Password for owner, or PIN for role staff."""
+    users = _load_users()
+    restaurants = users.get("restaurants", [])
+    if not restaurants and users.get("is_setup"):
+        restaurants = [{
+            "restaurant_id": "legacy",
+            "restaurant_name": users.get("restaurant_name", ""),
+            "owner_name": users.get("owner_name", ""),
+            "email": None, "password": None,
+            "roles": users.get("roles", {})
+        }]
+        
+    if not restaurants:
+        raise HTTPException(400, "No restaurants set up yet.")
+
+    # Email/Password Login (Owner/Manager)
+    if req.email and req.password:
+        for r in restaurants:
+            if r.get("email") == req.email and r.get("password") == req.password:
+                return {
+                    "success": True,
+                    "role": "manager",
+                    "label": "Manager",
+                    "restaurant_id": r.get("restaurant_id", "demo"),
+                    "restaurant_name": r.get("restaurant_name", ""),
+                    "owner_name": r.get("owner_name", "")
+                }
+        raise HTTPException(401, "Invalid email or password.")
+        
+    # PIN Login (Roles)
+    if req.pin:
+        for r in restaurants:
+            for role_key, role_data in r.get("roles", {}).items():
+                if role_data.get("pin") == req.pin:
+                    return {
+                        "success": True,
+                        "role": role_key,
+                        "label": role_data.get("label", role_key),
+                        "restaurant_id": r.get("restaurant_id", "demo"),
+                        "restaurant_name": r.get("restaurant_name", ""),
+                        "owner_name": r.get("owner_name", ""),
+                    }
+        raise HTTPException(401, "Invalid PIN.")
+        
+    raise HTTPException(400, "Please provide email/password or PIN.")
+
+@app.put("/auth/roles")
+def auth_update_roles(req: UpdateRolesRequest):
+    """Manager can update role PINs (defaults to latest restaurant for MVP)."""
+    users = _load_users()
+    restaurants = users.get("restaurants", [])
+    if not restaurants and users.get("is_setup"):
+        restaurants = [{
+            "restaurant_id": "legacy",
+            "restaurant_name": users.get("restaurant_name", ""),
+            "owner_name": users.get("owner_name", ""),
+            "email": None, "password": None,
+            "roles": users.get("roles", {})
+        }]
+        
+    if not restaurants:
+        raise HTTPException(400, "Restaurant not set up yet.")
+        
+    # Update the most recently added restaurant
+    latest_idx = len(restaurants) - 1
+    roles = restaurants[latest_idx].get("roles", {})
+    if req.manager_pin:
+        roles["manager"]["pin"] = req.manager_pin
+    if req.cashier_pin:
+        roles["cashier"]["pin"] = req.cashier_pin
+    if req.kitchen_pin:
+        roles["kitchen"]["pin"] = req.kitchen_pin
+        
+    restaurants[latest_idx]["roles"] = roles
+    _save_users({"is_setup": True, "restaurants": restaurants})
+    return {"success": True}
+
+
+# ═══════════════════════════════════════════════
+# Orders Status Endpoints (KDS)
+# ═══════════════════════════════════════════════
+
+class OrderStatusUpdate(BaseModel):
+    status: str  # 'preparing' | 'ready' | 'completed' | 'cancelled'
+
+@app.get("/orders/active")
+def get_active_orders(rid: str | None = Depends(_get_rid)):
+    """Return all orders that are not completed or cancelled."""
+    orders = _load_orders_file(rid)
+    active = [o for o in orders if o.get("status") not in ("completed", "cancelled")]
+    for o in active:
+        if "status" not in o:
+            o["status"] = "received"
+    return {"orders": active}
+
+@app.get("/orders/all")
+def get_all_orders(rid: str | None = Depends(_get_rid)):
+    """Return all orders."""
+    orders = _load_orders_file(rid)
+    for o in orders:
+        if "status" not in o:
+            o["status"] = "completed"
+    return {"orders": orders}
+
+@app.put("/orders/{order_id}/status")
+def update_order_status(order_id: str, req: OrderStatusUpdate, rid: str | None = Depends(_get_rid)):
+    """Update the status of a specific order (kitchen use)."""
+    valid = {"received", "preparing", "ready", "completed", "cancelled"}
+    if req.status not in valid:
+        raise HTTPException(400, f"Invalid status. Use one of: {valid}")
+    orders = _load_orders_file(rid)
+    for order in orders:
+        if order.get("order_id") == order_id:
+            order["status"] = req.status
+            order["status_updated_at"] = datetime.now().isoformat()
+            _save_orders_file(orders)
+            return {"success": True, "order_id": order_id, "status": req.status}
+    raise HTTPException(404, f"Order '{order_id}' not found.")
+
+
+# ═══════════════════════════════════════════════
 # Module 1 — Revenue Intelligence Endpoints
 # ═══════════════════════════════════════════════
 
+
 @app.get("/menu/analysis")
-def menu_analysis():
+def menu_analysis(rid: str = Depends(_get_rid)):
     """Full item-level profitability matrix."""
-    return {"items": revenue_engine.menu_matrix()}
+    return {"items": revenue_engine.menu_matrix(rid)}
 
 
 @app.get("/menu/hidden-stars")
-def menu_hidden_stars():
+def menu_hidden_stars(rid: str = Depends(_get_rid)):
     """Under-promoted high-margin items."""
-    return {"hidden_stars": revenue_engine.hidden_stars()}
+    return {"hidden_stars": revenue_engine.hidden_stars(rid)}
 
 
 @app.get("/menu/combos")
-def menu_combos():
+def menu_combos(rid: str = Depends(_get_rid)):
     """Recommended item bundles from Apriori association rules."""
-    return {"combos": revenue_engine.combo_recommendations()}
+    return {"combos": revenue_engine.combo_recommendations(rid)}
 
 
 class SaveComboRequest(BaseModel):
@@ -302,31 +760,32 @@ async def voice_transcribe(file: UploadFile = File(...)):
 
 
 @app.post("/voice/parse-order")
-def voice_parse_order(input: TranscriptionInput):
+def voice_parse_order(input: TranscriptionInput, rid: str = Depends(_get_rid)):
     """Accept transcription text, return mapped order JSON."""
     parsed = voice_copilot.parse_order(input.transcription)
 
     # Get upsell suggestion
     if parsed["items"]:
-        upsell = voice_copilot.suggest_upsell(parsed["items"])
+        upsell = voice_copilot.suggest_upsell(parsed["items"], rid)
         parsed["upsell_suggestion"] = upsell
 
     return parsed
 
 
 @app.post("/voice/confirm-order")
-def voice_confirm_order(input: ConfirmOrderInput):
+def voice_confirm_order(input: ConfirmOrderInput, rid: str = Depends(_get_rid)):
     """Finalize order, push to PoS, generate KOT, and auto-deplete inventory."""
     result = voice_copilot.confirm_order(
         items=input.items,
         upsell_accepted=input.upsell_accepted,
         upsell_items=input.upsell_items,
         language_detected=input.language_detected,
+        restaurant_id=rid,
     )
 
     # ─── Auto-deplete inventory based on recipes ───
-    recipes = _load_recipes()
-    inventory = _load_inventory()
+    recipes = _load_recipes(rid)
+    inventory = _load_inventory(rid)
     inv_map = {i["ingredient_id"]: i for i in inventory}
     depleted = {}
     stock_alerts = []
@@ -353,7 +812,6 @@ def voice_confirm_order(input: ConfirmOrderInput):
                     "unit": inv_map[ing_id]["unit"],
                 }
 
-    # Check for low-stock alerts
     for ing_id, info in depleted.items():
         inv_item = inv_map[ing_id]
         if inv_item["current_stock"] <= inv_item["min_stock"]:
@@ -365,9 +823,8 @@ def voice_confirm_order(input: ConfirmOrderInput):
                 "unit": inv_item["unit"],
             })
 
-    # Save updated inventory
     if depleted:
-        _save_inventory(list(inv_map.values()))
+        _save_inventory(list(inv_map.values()), rid)
 
     result["inventory_impact"] = {
         "depleted": list(depleted.values()),
@@ -377,9 +834,9 @@ def voice_confirm_order(input: ConfirmOrderInput):
 
 
 @app.get("/voice/orders")
-def voice_orders():
+def voice_orders(rid: str = Depends(_get_rid)):
     """List all placed orders."""
-    return {"orders": voice_copilot.get_all_orders()}
+    return {"orders": voice_copilot.get_all_orders(rid)}
 
 
 # ═══════════════════════════════════════════════
@@ -403,16 +860,15 @@ class MenuItemUpdate(BaseModel):
 
 
 @app.get("/menu/items")
-def get_menu_items():
+def get_menu_items(rid: str = Depends(_get_rid)):
     """Return all raw menu items."""
-    return {"items": _load_menu_file()}
+    return {"items": _load_menu_file(rid)}
 
 
 @app.post("/menu/items", status_code=201)
-def add_menu_item(item: MenuItemCreate):
-    """Add a new menu item and persist to menu.json."""
-    menu = _load_menu_file()
-    # Auto-generate next ID
+def add_menu_item(item: MenuItemCreate, rid: str = Depends(_get_rid)):
+    """Add a new menu item and persist to DB."""
+    menu = _load_menu_file(rid)
     existing_ids = [m.get("item_id", "M000") for m in menu]
     nums = [int(i[1:]) for i in existing_ids if i.startswith("M") and i[1:].isdigit()]
     next_num = max(nums, default=0) + 1
@@ -424,15 +880,14 @@ def add_menu_item(item: MenuItemCreate):
         "food_cost": item.food_cost,
         "is_available": item.is_available,
     }
-    menu.append(new_item)
-    _save_menu_file(menu)
+    _save_menu_item_db(new_item, rid)
     return {"item": new_item, "message": "Item added successfully"}
 
 
 @app.put("/menu/items/{item_id}")
-def update_menu_item(item_id: str, updates: MenuItemUpdate):
+def update_menu_item(item_id: str, updates: MenuItemUpdate, rid: str = Depends(_get_rid)):
     """Update any fields of a menu item."""
-    menu = _load_menu_file()
+    menu = _load_menu_file(rid)
     for item in menu:
         if item["item_id"] == item_id:
             if updates.name is not None:
@@ -445,19 +900,19 @@ def update_menu_item(item_id: str, updates: MenuItemUpdate):
                 item["food_cost"] = updates.food_cost
             if updates.is_available is not None:
                 item["is_available"] = updates.is_available
-            _save_menu_file(menu)
+            _save_menu_item_db(item, rid)
             return {"item": item, "message": "Item updated successfully"}
     raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
 
 
 @app.patch("/menu/items/{item_id}/toggle")
-def toggle_menu_item(item_id: str):
+def toggle_menu_item(item_id: str, rid: str = Depends(_get_rid)):
     """Toggle availability of a menu item."""
-    menu = _load_menu_file()
+    menu = _load_menu_file(rid)
     for item in menu:
         if item["item_id"] == item_id:
             item["is_available"] = not item.get("is_available", True)
-            _save_menu_file(menu)
+            _save_menu_item_db(item, rid)
             return {"item": item, "message": f"Availability set to {item['is_available']}"}
     raise HTTPException(status_code=404, detail=f"Item {item_id} not found")
 
@@ -508,22 +963,8 @@ def update_recipe(item_id: str, ingredients: list[dict]):
     return {"message": "Recipe saved", "recipe": recipes[item_id]}
 
 
-# ═══════════════════════════════════════════════
-# Health check
-# ═══════════════════════════════════════════════
 
 # ─── Inventory Management ───────────────────────────────────────────
-INVENTORY_FILE = os.path.join(DATA_DIR, "inventory.json")
-
-
-def _load_inventory() -> list:
-    with open(INVENTORY_FILE, encoding="utf-8") as f:
-        return json.load(f)
-
-
-def _save_inventory(data: list):
-    with open(INVENTORY_FILE, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
 
 
 class InventoryItem(BaseModel):

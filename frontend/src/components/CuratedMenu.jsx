@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 const TIER_CONFIG = {
     'Must Keep': { color: '#10b981', bg: '#ecfdf5', icon: '⭐', border: '#bbf7d0' },
@@ -30,7 +31,7 @@ export default function CuratedMenu() {
     const fetchCurated = useCallback(async () => {
         setLoading(true)
         try {
-            const res = await fetch('/menu/curated')
+            const res = await apiFetch('/menu/curated')
             const d = await res.json()
             setData(d)
         } catch (e) { console.error(e) }
@@ -149,7 +150,7 @@ ${tiersOrder.map(tier => {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            {/* ─── Header Info Banner ─── */}
+            {/* â”€â”€â”€ Header Info Banner â”€â”€â”€ */}
             <div style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)', borderRadius: 16, padding: '24px 28px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20 }}>
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
@@ -172,7 +173,7 @@ ${tiersOrder.map(tier => {
                 </div>
             </div>
 
-            {/* ─── Tier Summary Cards ─── */}
+            {/* â”€â”€â”€ Tier Summary Cards â”€â”€â”€ */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
                 {['Must Keep', 'Strong Performer', 'Moderate', 'Consider Removing'].map(tier => {
                     const cfg = TIER_CONFIG[tier]
@@ -193,7 +194,7 @@ ${tiersOrder.map(tier => {
                 })}
             </div>
 
-            {/* ─── Filters & Controls ─── */}
+            {/* â”€â”€â”€ Filters & Controls â”€â”€â”€ */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
                 <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
                     {categories.map(c => (
@@ -228,14 +229,14 @@ ${tiersOrder.map(tier => {
                 </div>
             </div>
 
-            {/* ─── Count ─── */}
+            {/* â”€â”€â”€ Count â”€â”€â”€ */}
             <div style={{ fontSize: 13, color: 'var(--text-tertiary)' }}>
                 Showing <strong>{filtered.length}</strong> of <strong>{items.length}</strong> items
                 {filterTier !== 'All' && <> · Tier: <span style={{ color: TIER_CONFIG[filterTier]?.color, fontWeight: 600 }}>{filterTier}</span></>}
                 {filterCat !== 'All' && <> · Category: <strong>{filterCat}</strong></>}
             </div>
 
-            {/* ─── Table View ─── */}
+            {/* â”€â”€â”€ Table View â”€â”€â”€ */}
             {view === 'table' && (
                 <div className="glass-card" style={{ overflow: 'hidden', borderRadius: 12 }}>
                     <table className="data-table">
@@ -296,7 +297,7 @@ ${tiersOrder.map(tier => {
                 </div>
             )}
 
-            {/* ─── Card View ─── */}
+            {/* â”€â”€â”€ Card View â”€â”€â”€ */}
             {view === 'cards' && (
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16 }}>
                     {filtered.map((item, idx) => {
@@ -336,3 +337,4 @@ ${tiersOrder.map(tier => {
         </div>
     )
 }
+

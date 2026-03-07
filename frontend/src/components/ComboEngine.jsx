@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import apiFetch from '../utils/apiFetch'
 
 export default function ComboEngine() {
     const [combos, setCombos] = useState([])
@@ -19,8 +20,8 @@ export default function ComboEngine() {
     const fetchAll = async () => {
         try {
             const [r1, r2] = await Promise.all([
-                fetch('/menu/combos').then(r => r.json()),
-                fetch('/menu/combos/saved').then(r => r.json()),
+                apiFetch('/menu/combos').then(r => r.json()),
+                apiFetch('/menu/combos/saved').then(r => r.json()),
             ])
             setCombos(r1.combos || [])
             setSavedCombos(r2.combos || [])
@@ -41,7 +42,7 @@ export default function ComboEngine() {
         if (!comboName.trim()) return
         setSaving(true)
         try {
-            const res = await fetch('/menu/combos/save', {
+            const res = await apiFetch('/menu/combos/save', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -52,7 +53,7 @@ export default function ComboEngine() {
             })
             const data = await res.json()
             if (res.ok) {
-                showToast(`✓ "${comboName}" added to menu!`)
+                showToast(`✔ "${comboName}" added to menu!`)
                 setSaveModal(null)
                 fetchAll()
             } else if (res.status === 409) {
@@ -196,7 +197,7 @@ export default function ComboEngine() {
                             <div style={{ display: 'flex', gap: 12 }}>
                                 {alreadySaved ? (
                                     <button disabled style={{ flex: 1, padding: '10px 16px', fontSize: 14, borderRadius: 10, border: '1.5px solid #bbf7d0', background: '#f0fdf4', color: '#10b981', fontWeight: 700, fontFamily: 'inherit', cursor: 'default' }}>
-                                        ✓ Added to Menu
+                                        ✔ Added to Menu
                                     </button>
                                 ) : (
                                     <button
@@ -256,7 +257,7 @@ export default function ComboEngine() {
                                     ))}
                                 </div>
                                 <p style={{ fontSize: 12, color: '#64748b', marginTop: 6 }}>
-                                    ⓘ Final price = sum of component prices minus {discountPct}% discount. Category set to "Combos".
+                                    ℹ Final price = sum of component prices minus {discountPct}% discount. Category set to "Combos".
                                 </p>
                             </div>
                         </div>
@@ -288,3 +289,4 @@ export default function ComboEngine() {
         </div>
     )
 }
+

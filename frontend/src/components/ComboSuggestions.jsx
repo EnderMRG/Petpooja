@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 export default function ComboSuggestions() {
     const [combos, setCombos] = useState([])
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch('/menu/combos')
+        apiFetch('/menu/combos')
             .then(r => r.json())
             .then(data => {
                 setCombos(data.combos || [])
@@ -32,8 +33,8 @@ export default function ComboSuggestions() {
                     <div
                         key={idx}
                         className={`p-4 rounded-xl border transition-all duration-300 hover:scale-[1.02] ${combo.includes_hidden_star
-                                ? 'border-purple-500/30 bg-gradient-to-br from-purple-600/10 to-blue-600/5'
-                                : 'border-slate-700/50 bg-slate-800/30'
+                            ? 'border-purple-500/30 bg-gradient-to-br from-purple-600/10 to-blue-600/5'
+                            : 'border-slate-700/50 bg-slate-800/30'
                             }`}
                     >
                         {/* Combo Header */}

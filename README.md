@@ -2,7 +2,7 @@
 
 **AI-Powered Revenue Intelligence, Voice Ordering & Inventory Management for Restaurants**
 
-A full-stack restaurant SaaS platform that turns raw PoS data into intelligent revenue decisions, automates voice-based ordering, manages inventory with recipe-based auto-depletion, and provides real-time operational insights.
+A full-stack restaurant SaaS platform that turns raw PoS data into intelligent revenue decisions, automates voice-based ordering, manages inventory with recipe-based auto-depletion, and provides real-time operational insights — all running **100% locally** with no external API costs.
 
 ---
 
@@ -37,12 +37,16 @@ Open **http://localhost:5173** — the frontend proxies API requests to `localho
 
 | Module | Description |
 |---|---|
+| 🏠 **Landing Page** | Animated hero page with live feature showcase |
+| 🔐 **Login / Setup** | Onboarding flow with restaurant profile configuration |
 | 📊 **Revenue Intelligence** | Menu matrix, margin analysis, combo recommendations, pricing suggestions |
 | 🎙️ **Voice Ordering** | Whisper STT + fuzzy matching, upsell engine, KOT generation |
 | 📦 **Inventory Manager** | Full CRUD, stock tracking, low-stock alerts, restock operations |
 | 🧾 **Recipe (BOM)** | Bill of Materials per menu item, auto-depletion on order placement |
 | ⚙️ **Menu Management** | Add/edit/delete items with integrated recipe builder |
 | 📋 **Order History** | Searchable order log with detailed breakdowns |
+| 🍽️ **Curated Menu** | Customer-facing menu with filtering, cart & checkout |
+| 🖥️ **Kitchen Display** | Real-time KDS for kitchen staff with order status tracking |
 
 ---
 
@@ -58,8 +62,9 @@ Open **http://localhost:5173** — the frontend proxies API requests to `localho
 
 **Key Features:**
 - **Menu Matrix Classification** — Stars ⭐, Hidden Stars 💎, Plowhorses 🐴, Dogs 🐕
-- **Apriori Association Mining** — discovers frequently co-ordered items from transaction data
+- **Apriori Association Mining** — discovers frequently co-ordered items from 800 mock transactions
 - **Price Optimization** — rule-based suggestions to improve margins
+- **Contribution Margin Analysis** — per-item profit breakdown with velocity scoring
 
 ---
 
@@ -127,6 +132,20 @@ Open **http://localhost:5173** — the frontend proxies API requests to `localho
 
 ---
 
+## 🍽️ Module 6 — Customer Menu & Kitchen Display
+
+**Customer-Facing Menu (`CuratedMenu`):**
+- Filterable menu by category with real-time search
+- Add-to-cart with quantity controls and modifier support
+- Cart summary with GST calculation and checkout flow
+
+**Kitchen Display System (`KitchenDisplay`):**
+- Live order queue for kitchen staff
+- Order status transitions: Pending → In Progress → Ready → Served
+- Visual timer and priority indicators per order
+
+---
+
 ## 🛠️ Tech Stack
 
 | Layer | Technologies |
@@ -134,7 +153,8 @@ Open **http://localhost:5173** — the frontend proxies API requests to `localho
 | **Backend** | Python 3.12, FastAPI, Uvicorn |
 | **ML/AI** | OpenAI Whisper (STT), rapidfuzz (fuzzy matching), mlxtend (Apriori) |
 | **Analytics** | pandas, numpy |
-| **Frontend** | React 18, Vite 5, Recharts |
+| **Frontend** | React 19, Vite 5, Tailwind CSS 4, Recharts, Framer Motion |
+| **Icons** | Lucide React |
 | **Data** | JSON files (menu, inventory, recipes, orders, transactions) |
 
 > **No external LLM APIs** — Speech-to-text and all ML runs 100% locally.
@@ -147,6 +167,8 @@ Open **http://localhost:5173** — the frontend proxies API requests to `localho
 Petpooja/
 ├── backend/
 │   ├── main.py                     # FastAPI app (20+ endpoints)
+│   ├── supplier_server.py          # Supplier-side server
+│   ├── generate_transactions.py    # Mock transaction data generator
 │   ├── data/
 │   │   ├── menu.json               # 51 menu items
 │   │   ├── inventory.json          # 20 inventory ingredients
@@ -154,9 +176,9 @@ Petpooja/
 │   │   ├── orders.json             # Placed orders
 │   │   └── transactions.json       # 800 mock transactions
 │   ├── modules/
+│   │   ├── db.py                   # JSON data access layer
 │   │   ├── revenue_engine.py       # Margin, velocity, matrix, Apriori, pricing
 │   │   └── voice_copilot.py        # STT, fuzzy match, upsell, KOT
-│   ├── generate_transactions.py    # Transaction data generator
 │   └── requirements.txt
 ├── frontend/
 │   ├── public/
@@ -164,22 +186,33 @@ Petpooja/
 │   ├── src/
 │   │   ├── App.jsx                 # Tab navigation shell
 │   │   ├── main.jsx                # React entry point
-│   │   ├── index.css               # Design system + theme
+│   │   ├── index.css               # Design system + dark theme + glassmorphism
+│   │   ├── utils/
+│   │   │   └── apiFetch.js         # Centralized API client wrapper
 │   │   └── components/
-│   │       ├── LandingPage.jsx     # Hero landing page
+│   │       ├── LandingPage.jsx     # Hero landing page with animated features
+│   │       ├── Login.jsx           # Login & authentication screen
+│   │       ├── Setup.jsx           # Restaurant onboarding / profile setup
 │   │       ├── Sidebar.jsx         # Navigation sidebar
 │   │       ├── Dashboard.jsx       # Revenue overview dashboard
-│   │       ├── MenuIntelligence.jsx # Menu matrix & analytics
-│   │       ├── ComboEngine.jsx     # Combo recommendation UI
-│   │       ├── VoiceOrders.jsx     # Voice + manual ordering
-│   │       ├── OrderHistory.jsx    # Order log & search
-│   │       ├── InventoryManager.jsx # Inventory CRUD + alerts
-│   │       └── Settings.jsx        # Menu management + recipe builder
+│   │       ├── MenuIntelligence.jsx # Menu matrix & analytics table
+│   │       ├── ComboEngine.jsx     # Apriori combo recommendation UI
+│   │       ├── ComboSuggestions.jsx # Combo suggestions sub-component
+│   │       ├── RevenueTable.jsx    # Detailed revenue breakdown table
+│   │       ├── VoiceOrders.jsx     # Full voice + manual ordering page
+│   │       ├── VoiceOrderPanel.jsx # Voice recording & transcription panel
+│   │       ├── OrderHistory.jsx    # Order log & search timeline
+│   │       ├── InventoryManager.jsx # Inventory CRUD + alerts + restock
+│   │       ├── Settings.jsx        # Menu management + recipe BOM builder
+│   │       ├── CuratedMenu.jsx     # Customer-facing menu with cart
+│   │       ├── CustomerMenu.jsx    # Full customer ordering experience
+│   │       └── KitchenDisplay.jsx  # Real-time kitchen order display (KDS)
 │   ├── vite.config.js
 │   └── package.json
 ├── docs/
 │   ├── Petpooja_ML_Models.tex      # ML models LaTeX source
 │   ├── Petpooja_ML_Models.pdf      # Compiled ML guide (PDF)
+│   ├── Petpooja_Project.tex        # Full project documentation (LaTeX)
 │   ├── PROJECT_EXPLANATION.md      # Detailed project explanation
 │   └── Petpooja Track *.pdf/pptx   # Hackathon track documents
 └── README.md
@@ -197,7 +230,7 @@ Petpooja/
 | **Apriori Algorithm** | Combo/bundle recommendations | `mlxtend` |
 | **Menu Matrix** | Star/Hidden Star/Plowhorse/Dog classification | `pandas` |
 
-### Proposed (see `Petpooja_ML_Models.pdf`)
+### Proposed (see `docs/Petpooja_ML_Models.pdf`)
 | Model | Purpose | Library |
 |---|---|---|
 | **Demand Forecasting** | Predict item sales for inventory planning | `prophet` |
@@ -207,15 +240,37 @@ Petpooja/
 
 ---
 
-## 📸 Screenshots
+## 🎨 UI/UX Design
 
-The application features:
-- **Landing Page** — modern hero page with animated feature cards
-- **Dashboard** — revenue stats, charts, quick actions
-- **Menu Intelligence** — interactive matrix, margin analysis
-- **Voice Orders** — drag-and-drop audio upload + manual ordering with cart
-- **Inventory Manager** — stock tracking, alerts, restock modals
-- **Settings** — menu CRUD with integrated recipe (BOM) builder
+The frontend features a premium dark-theme SaaS design:
+- **Dark glassmorphism** panels with backdrop blur
+- **Orange accent system** (`#F97415`) as primary brand color
+- **Framer Motion** animations — page transitions, counter animations, micro-interactions
+- **Recharts** for interactive bar, donut, and area charts
+- **Lucide React** icon system throughout
+- **Responsive layouts** with Tailwind CSS utility classes
+
+---
+
+## 🚦 API Quick Reference
+
+```
+Backend base URL: http://localhost:8000
+Frontend dev URL: http://localhost:5173 (proxies /api/* → backend)
+
+Health check:    GET  /
+Menu analysis:   GET  /menu/analysis
+Hidden stars:    GET  /menu/hidden-stars
+Combos:          GET  /menu/combos
+Price tips:      GET  /menu/price-suggestions
+Transcribe:      POST /voice/transcribe       (multipart audio)
+Parse order:     POST /voice/parse-order      (JSON: { text })
+Confirm order:   POST /voice/confirm-order    (JSON: order payload)
+Order history:   GET  /voice/orders
+Inventory:       GET  /inventory/items
+Restock:         PATCH /inventory/items/{id}/restock
+Recipes:         GET  /recipes
+```
 
 ---
 

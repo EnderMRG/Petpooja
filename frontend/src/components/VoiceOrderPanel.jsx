@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 export default function VoiceOrderPanel() {
     const [transcription, setTranscription] = useState('')
@@ -12,7 +13,7 @@ export default function VoiceOrderPanel() {
     const [showOrders, setShowOrders] = useState(false)
     const fileRef = useRef(null)
 
-    // ─── Upload & Transcribe audio ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Upload & Transcribe audio Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const handleFileUpload = async (file) => {
         if (!file) return
         setLoading(true)
@@ -20,10 +21,10 @@ export default function VoiceOrderPanel() {
         formData.append('file', file)
 
         try {
-            const res = await fetch('/voice/transcribe', { method: 'POST', body: formData })
+            const res = await apiFetch('/voice/transcribe', { method: 'POST', body: formData })
             const data = await res.json()
             if (data.error) {
-                // Whisper not available — show error
+                // Whisper not available Ã¢â¬â show error
                 setTranscription(`[Whisper unavailable] ${data.error}`)
                 setLoading(false)
                 return
@@ -37,11 +38,11 @@ export default function VoiceOrderPanel() {
         setLoading(false)
     }
 
-    // ─── Parse order from text ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Parse order from text Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const parseOrder = async (text) => {
         setLoading(true)
         try {
-            const res = await fetch('/voice/parse-order', {
+            const res = await apiFetch('/voice/parse-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ transcription: text }),
@@ -55,7 +56,7 @@ export default function VoiceOrderPanel() {
         setLoading(false)
     }
 
-    // ─── Confirm order ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Confirm order Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const confirmOrder = async (acceptUpsell = false) => {
         if (!parsedOrder) return
         setLoading(true)
@@ -68,7 +69,7 @@ export default function VoiceOrderPanel() {
                     : null,
                 language_detected: 'Hinglish',
             }
-            const res = await fetch('/voice/confirm-order', {
+            const res = await apiFetch('/voice/confirm-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(body),
@@ -82,15 +83,15 @@ export default function VoiceOrderPanel() {
         setLoading(false)
     }
 
-    // ─── Fetch all orders ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Fetch all orders Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const fetchOrders = async () => {
-        const res = await fetch('/voice/orders')
+        const res = await apiFetch('/voice/orders')
         const data = await res.json()
         setOrders(data.orders || [])
         setShowOrders(true)
     }
 
-    // ─── Reset ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Reset Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const reset = () => {
         setTranscription('')
         setParsedOrder(null)
@@ -101,27 +102,27 @@ export default function VoiceOrderPanel() {
 
     return (
         <div className="space-y-6">
-            {/* ─── Top bar ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Top bar Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             <div className="flex items-center justify-between">
                 <div>
-                    <h2 className="text-xl font-bold">🎙️ Voice Order Copilot</h2>
+                    <h2 className="text-xl font-bold">🎤 Voice Order Copilot</h2>
                     <p className="text-sm text-slate-400">Upload audio or type an order in English / Hindi / Hinglish</p>
                 </div>
                 <div className="flex gap-3">
                     {step !== 'input' && (
                         <button onClick={reset}
                             className="px-4 py-2 text-sm rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
-                            ↩ New Order
+                            Ã¢â Â© New Order
                         </button>
                     )}
                     <button onClick={fetchOrders}
                         className="px-4 py-2 text-sm rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 transition-all cursor-pointer">
-                        📋 Order History
+                        Ã°Å¸ââ¹ Order History
                     </button>
                 </div>
             </div>
 
-            {/* ─── Step: Input ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Step: Input Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             {step === 'input' && (
                 <div className="space-y-6 animate-in">
                     {/* Audio Upload */}
@@ -185,7 +186,7 @@ export default function VoiceOrderPanel() {
                 </div>
             )}
 
-            {/* ─── Step: Parsed Order ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Step: Parsed Order Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             {step === 'parsed' && parsedOrder && (
                 <div className="space-y-4 animate-in">
                     {/* Transcription */}
@@ -245,7 +246,7 @@ export default function VoiceOrderPanel() {
                     {/* Clarifications */}
                     {parsedOrder.clarifications?.length > 0 && (
                         <div className="glass-card p-5 border-amber-500/20">
-                            <h4 className="text-sm font-semibold text-amber-400 mb-2">⚠️ Needs Clarification</h4>
+                            <h4 className="text-sm font-semibold text-amber-400 mb-2">⚠ï¸ Needs Clarification</h4>
                             {parsedOrder.clarifications.map((c, i) => (
                                 <div key={i} className="p-3 bg-amber-500/5 rounded-lg mb-2">
                                     <p className="text-sm text-slate-300">{c.message}</p>
@@ -294,7 +295,7 @@ export default function VoiceOrderPanel() {
                 </div>
             )}
 
-            {/* ─── Step: Confirmed ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Step: Confirmed Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             {step === 'confirmed' && confirmedOrder && (
                 <div className="space-y-4 animate-in">
                     <div className="glass-card p-5 border-emerald-500/20">
@@ -344,7 +345,7 @@ export default function VoiceOrderPanel() {
                 </div>
             )}
 
-            {/* ─── Order History Modal ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Order History Modal Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             {showOrders && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
                     onClick={() => setShowOrders(false)}>
@@ -385,7 +386,7 @@ export default function VoiceOrderPanel() {
                 </div>
             )}
 
-            {/* ─── Loading overlay ─── */}
+            {/* Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Loading overlay Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ */}
             {loading && (
                 <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/30 backdrop-blur-sm">
                     <div className="glass-card p-8 flex flex-col items-center gap-3">
@@ -397,3 +398,4 @@ export default function VoiceOrderPanel() {
         </div>
     )
 }
+

@@ -9,6 +9,8 @@ export default defineConfig({
       '/voice': 'http://localhost:8000',
       '/inventory': 'http://localhost:8000',
       '/recipes': 'http://localhost:8000',
+      '/auth': 'http://localhost:8000',
+      '/orders': 'http://localhost:8000',
     }
   }
 })

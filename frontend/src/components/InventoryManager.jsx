@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import apiFetch from '../utils/apiFetch'
 
 const CATEGORIES = ['All', 'Dairy', 'Meat', 'Bakery', 'Vegetables', 'Frozen', 'Sauces', 'Oils', 'Spices', 'Beverages']
 
@@ -47,7 +48,7 @@ export default function InventoryManager() {
 
     const fetchItems = useCallback(async () => {
         try {
-            const res = await fetch('/inventory/items')
+            const res = await apiFetch('/inventory/items')
             const data = await res.json()
             setItems(data.items || [])
         } catch (e) { console.error(e) }
@@ -56,7 +57,7 @@ export default function InventoryManager() {
 
     const fetchSuppliers = useCallback(async () => {
         try {
-            const res = await fetch('/inventory/suppliers')
+            const res = await apiFetch('/inventory/suppliers')
             const data = await res.json()
             setSupplierList(data.suppliers || [])
         } catch (e) { console.error(e) }
@@ -64,7 +65,7 @@ export default function InventoryManager() {
 
     const fetchRestockLog = useCallback(async () => {
         try {
-            const res = await fetch('/inventory/restock-requests')
+            const res = await apiFetch('/inventory/restock-requests')
             const data = await res.json()
             setRestockLog(data.requests || [])
         } catch (e) { console.error(e) }
@@ -76,12 +77,12 @@ export default function InventoryManager() {
         fetchRestockLog()
     }, [fetchItems, fetchSuppliers, fetchRestockLog])
 
-    // ── Add / Edit ──
+    // â”€â”€ Add / Edit â”€â”€
     const handleSubmit = async () => {
         const url = editItem ? `/inventory/items/${editItem.ingredient_id}` : '/inventory/items'
         const method = editItem ? 'PUT' : 'POST'
         try {
-            const res = await fetch(url, {
+            const res = await apiFetch(url, {
                 method, headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(form),
             })
@@ -92,16 +93,16 @@ export default function InventoryManager() {
         } catch (e) { showToast('Operation failed', false) }
     }
 
-    // ── Local Restock (add qty) ──
+    // â”€â”€ Local Restock (add qty) â”€â”€
     const handleRestock = async () => {
         if (!restockQty || isNaN(restockQty)) return
         try {
-            const res = await fetch(`/inventory/items/${restockId}/restock?qty=${restockQty}`, { method: 'PATCH' })
+            const res = await apiFetch(`/inventory/items/${restockId}/restock?qty=${restockQty}`, { method: 'PATCH' })
             if (res.ok) { showToast('Stock updated!'); setRestockId(null); setRestockQty(''); fetchItems() }
         } catch (e) { showToast('Restock failed', false) }
     }
 
-    // ── Supplier Restock Request ──
+    // â”€â”€ Supplier Restock Request â”€â”€
     const openRestockRequest = (item) => {
         const suggestedQty = item.max_stock > 0
             ? Math.max(0, item.max_stock - item.current_stock)
@@ -114,7 +115,7 @@ export default function InventoryManager() {
         if (!restockReqQty || isNaN(restockReqQty) || !restockReqItem) return
         setRestockSending(true)
         try {
-            const res = await fetch('/inventory/restock-request', {
+            const res = await apiFetch('/inventory/restock-request', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -126,7 +127,7 @@ export default function InventoryManager() {
             if (res.ok) {
                 const status = data.log?.status
                 const msg = status === 'acknowledged'
-                    ? `✓ Restock order sent & acknowledged by ${restockReqItem.supplier}!`
+                    ? `âœ“ Restock order sent & acknowledged by ${restockReqItem.supplier}!`
                     : `Restock order sent (no supplier ack)`
                 showToast(msg)
                 setRestockReqItem(null)
@@ -139,10 +140,10 @@ export default function InventoryManager() {
         finally { setRestockSending(false) }
     }
 
-    // ── Delete ──
+    // â”€â”€ Delete â”€â”€
     const handleDelete = async (id) => {
         try {
-            const res = await fetch(`/inventory/items/${id}`, { method: 'DELETE' })
+            const res = await apiFetch(`/inventory/items/${id}`, { method: 'DELETE' })
             if (res.ok) { showToast('Item removed'); setDeleteConfirm(null); fetchItems() }
         } catch (e) { showToast('Delete failed', false) }
     }
@@ -189,7 +190,7 @@ export default function InventoryManager() {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
 
-            {/* ─── Stat Cards ─── */}
+            {/* â”€â”€â”€ Stat Cards â”€â”€â”€ */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
                 {[
                     { icon: 'inventory_2', label: 'Total Ingredients', value: items.length, color: 'var(--primary)', bg: 'var(--primary-dim)' },
@@ -211,7 +212,7 @@ export default function InventoryManager() {
                 ))}
             </div>
 
-            {/* ─── Toolbar ─── */}
+            {/* â”€â”€â”€ Toolbar â”€â”€â”€ */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center', flex: 1 }}>
                     <input value={search} onChange={e => setSearch(e.target.value)}
@@ -242,7 +243,7 @@ export default function InventoryManager() {
                 </div>
             </div>
 
-            {/* ─── Low Stock Alert Banner ─── */}
+            {/* â”€â”€â”€ Low Stock Alert Banner â”€â”€â”€ */}
             {lowStock.length > 0 && (
                 <div style={{ padding: '12px 20px', borderRadius: 12, background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
@@ -258,7 +259,7 @@ export default function InventoryManager() {
                 </div>
             )}
 
-            {/* ─── Restock Log (shown above table) ─── */}
+            {/* â”€â”€â”€ Restock Log (shown above table) â”€â”€â”€ */}
             {showLog && (
                 <div className="glass-card" style={{ borderRadius: 12, overflow: 'hidden' }}>
                     <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -300,19 +301,19 @@ export default function InventoryManager() {
                                         <td style={{ fontSize: 13 }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                                                 <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>storefront</span>
-                                                {entry.supplier || '—'}
+                                                {entry.supplier || 'â€”'}
                                             </div>
                                         </td>
                                         <td style={{ textAlign: 'center' }}>
                                             <span style={{ padding: '3px 10px', borderRadius: 999, fontSize: 11, fontWeight: 700, background: `${logStatusColor(entry.status)}20`, color: logStatusColor(entry.status) }}>
-                                                {entry.status === 'acknowledged' ? '✓ Acknowledged' :
+                                                {entry.status === 'acknowledged' ? 'âœ“ Acknowledged' :
                                                     entry.status === 'sent' ? '⏳ Sent' :
-                                                        entry.status === 'sent_no_ack' ? '⚠ No Ack' : '— Unmapped'}
+                                                        entry.status === 'sent_no_ack' ? 'âš  No Ack' : 'â€” Unmapped'}
                                             </span>
                                         </td>
-                                        <td style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 220 }}>{entry.supplier_response || '—'}</td>
+                                        <td style={{ fontSize: 12, color: 'var(--text-secondary)', maxWidth: 220 }}>{entry.supplier_response || 'â€”'}</td>
                                         <td style={{ textAlign: 'center', fontSize: 13, fontWeight: 600, color: 'var(--primary)' }}>
-                                            {entry.eta_days != null ? `${entry.eta_days}d` : '—'}
+                                            {entry.eta_days != null ? `${entry.eta_days}d` : 'â€”'}
                                         </td>
                                         <td style={{ fontSize: 11, color: 'var(--text-tertiary)' }}>
                                             {new Date(entry.sent_at).toLocaleString('en-IN', { dateStyle: 'short', timeStyle: 'short' })}
@@ -325,7 +326,7 @@ export default function InventoryManager() {
                 </div>
             )}
 
-            {/* ─── Inventory Table ─── */}
+            {/* â”€â”€â”€ Inventory Table â”€â”€â”€ */}
             <div className="glass-card" style={{ overflow: 'hidden', borderRadius: 12 }}>
                 <table className="data-table">
                     <thead>
@@ -368,7 +369,7 @@ export default function InventoryManager() {
                                     </td>
                                     <td style={{ textAlign: 'right', fontSize: 13, color: 'var(--text-tertiary)' }}>{item.min_stock} {item.unit}</td>
                                     <td style={{ textAlign: 'center' }}>
-                                        <span style={statusBadgeStyle(!isLow)}>{isLow ? '⚠ Low' : '✓ OK'}</span>
+                                        <span style={statusBadgeStyle(!isLow)}>{isLow ? 'âš  Low' : 'âœ“ OK'}</span>
                                     </td>
                                     <td style={{ textAlign: 'right', fontWeight: 600, fontSize: 13 }}>₹{item.cost_per_unit}/{item.unit}</td>
                                     <td style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
@@ -377,7 +378,7 @@ export default function InventoryManager() {
                                                 <span className="material-symbols-outlined" style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>storefront</span>
                                                 {item.supplier}
                                             </span>
-                                        ) : <span style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}>—</span>}
+                                        ) : <span style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}>â€”</span>}
                                     </td>
                                     <td style={{ fontSize: 12, color: 'var(--text-tertiary)' }}>{item.last_restocked}</td>
                                     <td style={{ textAlign: 'center' }}>
@@ -414,7 +415,7 @@ export default function InventoryManager() {
 
 
 
-            {/* ─── Add/Edit Modal ─── */}
+            {/* â”€â”€â”€ Add/Edit Modal â”€â”€â”€ */}
             {showModal && createPortal(
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={e => e.target === e.currentTarget && setShowModal(false)}>
@@ -460,12 +461,12 @@ export default function InventoryManager() {
                             <div>
                                 <label style={labelStyle}>Supplier</label>
                                 <select value={form.supplier} onChange={e => setForm({ ...form, supplier: e.target.value })} style={inputStyle}>
-                                    <option value="">— Select supplier or type below —</option>
+                                    <option value="">â€” Select supplier or type below â€”</option>
                                     {supplierList.map(s => <option key={s} value={s}>{s}</option>)}
                                 </select>
                                 <input value={form.supplier} onChange={e => setForm({ ...form, supplier: e.target.value })} style={{ ...inputStyle, marginTop: 6 }} placeholder="Or type a custom supplier name..." />
                                 <p style={{ fontSize: 11, color: 'var(--text-tertiary)', marginTop: 4 }}>
-                                    ⓘ A linked supplier enables the Restock Request workflow (sends order to supplier's API).
+                                    â“˜ A linked supplier enables the Restock Request workflow (sends order to supplier's API).
                                 </p>
                             </div>
                         </div>
@@ -477,7 +478,7 @@ export default function InventoryManager() {
                 </div>
                 , document.body)}
 
-            {/* ─── Supplier Restock Request Modal ─── */}
+            {/* â”€â”€â”€ Supplier Restock Request Modal â”€â”€â”€ */}
             {restockReqItem && createPortal(
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={e => e.target === e.currentTarget && !restockSending && setRestockReqItem(null)}>
@@ -509,7 +510,7 @@ export default function InventoryManager() {
 
                         {!restockReqItem.supplier && (
                             <div style={{ padding: '10px 14px', borderRadius: 8, background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', marginBottom: 12, fontSize: 12, color: '#b45309' }}>
-                                ⚠ No supplier linked. Edit this ingredient to assign a supplier and enable webhook delivery.
+                                âš  No supplier linked. Edit this ingredient to assign a supplier and enable webhook delivery.
                             </div>
                         )}
 
@@ -535,7 +536,7 @@ export default function InventoryManager() {
                 </div>
                 , document.body)}
 
-            {/* ─── Local Restock (add qty) Modal ─── */}
+            {/* â”€â”€â”€ Local Restock (add qty) Modal â”€â”€â”€ */}
             {restockId && createPortal(
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={e => e.target === e.currentTarget && setRestockId(null)}>
@@ -557,7 +558,7 @@ export default function InventoryManager() {
                 </div>
                 , document.body)}
 
-            {/* ─── Delete Confirm ─── */}
+            {/* â”€â”€â”€ Delete Confirm â”€â”€â”€ */}
             {deleteConfirm && createPortal(
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={e => e.target === e.currentTarget && setDeleteConfirm(null)}>
@@ -583,3 +584,4 @@ export default function InventoryManager() {
         </div>
     )
 }
+

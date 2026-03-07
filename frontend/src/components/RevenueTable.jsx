@@ -3,6 +3,7 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Cell
 } from 'recharts'
+import apiFetch from '../utils/apiFetch'
 
 const BADGE_MAP = {
     Star: 'badge-star',
@@ -14,8 +15,8 @@ const BADGE_MAP = {
 const BADGE_EMOJI = {
     Star: '⭐',
     'Hidden Star': '💎',
-    Plowhorse: '🐴',
-    Dog: '🐕',
+    Plowhorse: 'ðŸ´',
+    Dog: 'ðŸ•',
 }
 
 const VELOCITY_CLASS = {
@@ -42,10 +43,10 @@ export default function RevenueTable() {
 
     useEffect(() => {
         Promise.all([
-            fetch('/menu/analysis').then(r => r.json()),
-            fetch('/menu/hidden-stars').then(r => r.json()),
-            fetch('/menu/risks').then(r => r.json()),
-            fetch('/menu/price-suggestions').then(r => r.json()),
+            apiFetch('/menu/analysis').then(r => r.json()),
+            apiFetch('/menu/hidden-stars').then(r => r.json()),
+            apiFetch('/menu/risks').then(r => r.json()),
+            apiFetch('/menu/price-suggestions').then(r => r.json()),
         ]).then(([analysis, hs, rk, ps]) => {
             setItems(analysis.items || [])
             setHiddenStars(hs.hidden_stars || [])
@@ -73,7 +74,7 @@ export default function RevenueTable() {
 
     const top10Margin = useMemo(() =>
         [...items].sort((a, b) => b.margin - a.margin).slice(0, 10).map(i => ({
-            name: i.name.length > 18 ? i.name.slice(0, 16) + '…' : i.name,
+            name: i.name.length > 18 ? i.name.slice(0, 16) + 'â€¦' : i.name,
             margin: i.margin,
         }))
         , [items])
@@ -97,13 +98,13 @@ export default function RevenueTable() {
 
     return (
         <div className="space-y-6">
-            {/* ─── Summary Cards ─── */}
+            {/* â”€â”€â”€ Summary Cards â”€â”€â”€ */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Stars', count: classificationCounts.Star, emoji: '⭐', gradient: 'from-amber-600/20 to-amber-500/5', border: 'border-amber-500/20' },
                     { label: 'Hidden Stars', count: classificationCounts['Hidden Star'], emoji: '💎', gradient: 'from-purple-600/20 to-purple-500/5', border: 'border-purple-500/20', pulse: true },
-                    { label: 'Plowhorses', count: classificationCounts.Plowhorse, emoji: '🐴', gradient: 'from-orange-600/20 to-orange-500/5', border: 'border-orange-500/20' },
-                    { label: 'Dogs', count: classificationCounts.Dog, emoji: '🐕', gradient: 'from-slate-600/20 to-slate-500/5', border: 'border-slate-500/20' },
+                    { label: 'Plowhorses', count: classificationCounts.Plowhorse, emoji: 'ðŸ´', gradient: 'from-orange-600/20 to-orange-500/5', border: 'border-orange-500/20' },
+                    { label: 'Dogs', count: classificationCounts.Dog, emoji: 'ðŸ•', gradient: 'from-slate-600/20 to-slate-500/5', border: 'border-slate-500/20' },
                 ].map(card => (
                     <div key={card.label} className={`glass-card p-5 bg-gradient-to-br ${card.gradient} border ${card.border} ${card.pulse ? 'pulse-card' : ''}`}>
                         <div className="flex items-center justify-between mb-2">
@@ -115,7 +116,7 @@ export default function RevenueTable() {
                 ))}
             </div>
 
-            {/* ─── Top 10 Margin Chart ─── */}
+            {/* â”€â”€â”€ Top 10 Margin Chart â”€â”€â”€ */}
             <div className="glass-card p-6">
                 <h3 className="text-lg font-semibold mb-4">
                     📈 Top 10 Items by Contribution Margin
@@ -140,21 +141,21 @@ export default function RevenueTable() {
                 </div>
             </div>
 
-            {/* ─── Price Suggestions ─── */}
+            {/* â”€â”€â”€ Price Suggestions â”€â”€â”€ */}
             {priceSuggestions.length > 0 && (
                 <div className="glass-card p-6">
                     <h3 className="text-lg font-semibold mb-4">💡 Price Optimization Suggestions</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-80 overflow-y-auto pr-2">
                         {priceSuggestions.slice(0, 8).map(s => (
                             <div key={s.item_id} className={`p-4 rounded-xl border ${s.action === 'INCREASE_PRICE' ? 'border-orange-500/20 bg-orange-500/5' :
-                                    s.action === 'PROMOTE' ? 'border-purple-500/20 bg-purple-500/5' :
-                                        'border-slate-500/20 bg-slate-500/5'
+                                s.action === 'PROMOTE' ? 'border-purple-500/20 bg-purple-500/5' :
+                                    'border-slate-500/20 bg-slate-500/5'
                                 }`}>
                                 <div className="flex items-center justify-between mb-1">
                                     <span className="font-medium text-sm">{s.name}</span>
                                     <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${s.action === 'INCREASE_PRICE' ? 'bg-orange-500/20 text-orange-400' :
-                                            s.action === 'PROMOTE' ? 'bg-purple-500/20 text-purple-400' :
-                                                'bg-slate-500/20 text-slate-400'
+                                        s.action === 'PROMOTE' ? 'bg-purple-500/20 text-purple-400' :
+                                            'bg-slate-500/20 text-slate-400'
                                         }`}>{s.action.replace('_', ' ')}</span>
                                 </div>
                                 <p className="text-xs text-slate-400 leading-relaxed">{s.reason}</p>
@@ -167,7 +168,7 @@ export default function RevenueTable() {
                 </div>
             )}
 
-            {/* ─── Menu Matrix Table ─── */}
+            {/* â”€â”€â”€ Menu Matrix Table â”€â”€â”€ */}
             <div className="glass-card p-6">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
                     <h3 className="text-lg font-semibold">📋 Menu Profitability Matrix</h3>
@@ -177,8 +178,8 @@ export default function RevenueTable() {
                                 key={cat}
                                 onClick={() => setFilterCategory(cat)}
                                 className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all cursor-pointer ${filterCategory === cat
-                                        ? 'bg-purple-600 text-white'
-                                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-slate-800 text-slate-400 hover:text-white'
                                     }`}
                             >
                                 {cat}
@@ -230,3 +231,4 @@ export default function RevenueTable() {
         </div>
     )
 }
+

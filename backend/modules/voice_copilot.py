@@ -9,9 +9,8 @@ import uuid
 from datetime import datetime
 
 from rapidfuzz import fuzz, process
+from modules.db import load_menu as _db_load_menu, load_orders, save_order
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
-ORDERS_FILE = os.path.join(DATA_DIR, "orders.json")
 
 # ─── FFmpeg path resolution (Windows WinGet / system) ─────────────────────
 import shutil, glob as _glob
@@ -58,21 +57,18 @@ def _get_whisper_model():
     return _whisper_model
 
 
-def _load_menu() -> list[dict]:
-    with open(os.path.join(DATA_DIR, "menu.json")) as f:
-        return json.load(f)
+def _load_menu(restaurant_id: str = "demo") -> list[dict]:
+    return _db_load_menu(restaurant_id)
 
 
-def _load_orders() -> list[dict]:
-    if not os.path.exists(ORDERS_FILE):
-        return []
-    with open(ORDERS_FILE) as f:
-        return json.load(f)
+def _load_orders(restaurant_id: str = "demo") -> list[dict]:
+    return load_orders(restaurant_id)
 
 
-def _save_orders(orders: list[dict]):
-    with open(ORDERS_FILE, "w") as f:
-        json.dump(orders, f, indent=2)
+def _save_orders(orders: list[dict], restaurant_id: str = "demo"):
+    """Persist the full orders list back to DB (upserts each order)."""
+    for order in orders:
+        save_order(order, restaurant_id)
 
 
 # ─────────────────────────────────────────────
@@ -274,7 +270,7 @@ def parse_order(transcription: str) -> dict:
 # ─────────────────────────────────────────────
 # 3. Upsell Integration (queries Module 1)
 # ─────────────────────────────────────────────
-def suggest_upsell(order_items: list[dict]) -> dict | None:
+def suggest_upsell(order_items: list[dict], restaurant_id: str = "demo") -> dict | None:
     """
     Query combo engine to suggest a relevant upsell.
     Prioritizes Hidden Star items.
@@ -282,11 +278,11 @@ def suggest_upsell(order_items: list[dict]) -> dict | None:
     from modules.revenue_engine import combo_recommendations, hidden_stars
 
     ordered_ids = {item["item_id"] for item in order_items}
-    combos = combo_recommendations()
-    hs_items = hidden_stars()
+    combos = combo_recommendations(restaurant_id)
+    hs_items = hidden_stars(restaurant_id)
     hs_ids = {item["item_id"] for item in hs_items}
 
-    menu = _load_menu()
+    menu = _load_menu(restaurant_id)
     name_map = {item["item_id"]: item["name"] for item in menu}
     price_map = {item["item_id"]: item["selling_price"] for item in menu}
 
@@ -343,6 +339,7 @@ def confirm_order(
     upsell_accepted: bool = False,
     upsell_items: list[dict] | None = None,
     language_detected: str = "English",
+    restaurant_id: str = "demo",
 ) -> dict:
     """
     Finalize order: build JSON, save, generate KOT.
@@ -369,21 +366,16 @@ def confirm_order(
         "total": total,
         "upsell_accepted": upsell_accepted,
         "language_detected": language_detected,
-        "status": "confirmed",
+        "status": "received",
     }
 
-    # Save to orders database
-    orders = _load_orders()
+    # Save to correct restaurant's orders in DB
+    orders = _load_orders(restaurant_id)
     orders.append(order)
-    _save_orders(orders)
+    _save_orders(orders, restaurant_id)
 
-    # Generate KOT
     kot = generate_kot(order)
-
-    return {
-        "order": order,
-        "kot": kot,
-    }
+    return {"order": order, "kot": kot}
 
 
 def generate_kot(order: dict) -> str:
@@ -411,6 +403,6 @@ def generate_kot(order: dict) -> str:
     return "\n".join(lines)
 
 
-def get_all_orders() -> list[dict]:
-    """Return all placed orders."""
-    return _load_orders()
+def get_all_orders(restaurant_id: str = "demo") -> list[dict]:
+    """Return all placed orders for this restaurant."""
+    return _load_orders(restaurant_id)

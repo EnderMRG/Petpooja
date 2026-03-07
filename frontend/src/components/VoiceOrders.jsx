@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import apiFetch from '../utils/apiFetch'
 
 export default function VoiceOrders() {
     const [mode, setMode] = useState('voice') // 'voice' | 'manual'
@@ -13,7 +14,7 @@ export default function VoiceOrders() {
     const [showReceipt, setShowReceipt] = useState(false)
     const fileRef = useRef(null)
 
-    // ─── Live Mic State ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Live Mic State Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const [isRecording, setIsRecording] = useState(false)
     const [micStatus, setMicStatus] = useState('idle') // 'idle' | 'requesting' | 'recording' | 'processing' | 'error'
     const [micError, setMicError] = useState('')
@@ -32,7 +33,7 @@ export default function VoiceOrders() {
     // Load menu items for manual ordering
     const fetchMenu = useCallback(async () => {
         try {
-            const res = await fetch('/menu/items')
+            const res = await apiFetch('/menu/items')
             const data = await res.json()
             setMenuItems((data.items || []).filter(i => i.is_available))
         } catch (err) { console.error(err) }
@@ -41,7 +42,7 @@ export default function VoiceOrders() {
 
     useEffect(() => { fetchMenu() }, [fetchMenu])
 
-    // ─── Live Mic: Start Recording ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Live Mic: Start Recording Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const startMic = async () => {
         setMicError('')
         setMicStatus('requesting')
@@ -70,7 +71,7 @@ export default function VoiceOrders() {
                 try {
                     setProcessing(true)
                     setLoading(true)
-                    const res = await fetch('/voice/transcribe', { method: 'POST', body: formData })
+                    const res = await apiFetch('/voice/transcribe', { method: 'POST', body: formData })
                     const data = await res.json()
                     const text = data.transcription || data.error || ''
                     setTranscription(text)
@@ -113,7 +114,7 @@ export default function VoiceOrders() {
         }
     }, [])
 
-    // ─── Upload & Transcribe ───
+    // Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬ Upload & Transcribe Ã¢ââ¬Ã¢ââ¬Ã¢ââ¬
     const handleFileUpload = async (file) => {
         if (!file) return
         setProcessing(true)
@@ -123,7 +124,7 @@ export default function VoiceOrders() {
         const formData = new FormData()
         formData.append('file', file)
         try {
-            const res = await fetch('/voice/transcribe', { method: 'POST', body: formData })
+            const res = await apiFetch('/voice/transcribe', { method: 'POST', body: formData })
             const data = await res.json()
             setTranscription(data.transcription || data.error || '')
             if (data.transcription) await parseOrder(data.transcription)
@@ -132,12 +133,12 @@ export default function VoiceOrders() {
         setLoading(false)
     }
 
-    // ─── Parse Order ───
+    // ——— Parse Order ———
     const parseOrder = async (text) => {
         setLoading(true)
         setConfirmedOrder(null)
         try {
-            const res = await fetch('/voice/parse-order', {
+            const res = await apiFetch('/voice/parse-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ transcription: text }),
@@ -149,12 +150,12 @@ export default function VoiceOrders() {
         setLoading(false)
     }
 
-    // ─── Confirm Order ───
+    // ——— Confirm Order ———
     const confirmOrder = async (acceptUpsell = false) => {
         if (!parsedOrder) return
         setLoading(true)
         try {
-            const res = await fetch('/voice/confirm-order', {
+            const res = await apiFetch('/voice/confirm-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -170,7 +171,7 @@ export default function VoiceOrders() {
         setLoading(false)
     }
 
-    // ─── Manual Order: Confirm ───
+    // ——— Manual Order: Confirm ———
     const confirmManualOrder = async () => {
         const items = Object.entries(cart)
             .filter(([, qty]) => qty > 0)
@@ -181,7 +182,7 @@ export default function VoiceOrders() {
         if (items.length === 0) return
         setLoading(true)
         try {
-            const res = await fetch('/voice/confirm-order', {
+            const res = await apiFetch('/voice/confirm-order', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ items, upsell_accepted: false, language_detected: 'Manual' }),
@@ -237,7 +238,7 @@ export default function VoiceOrders() {
 
     return (
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'start' }}>
-            {/* ═══ LEFT COLUMN ═══ */}
+            {/* ——— LEFT COLUMN ——— */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 {/* Mode Tabs */}
                 <div style={{ display: 'flex', background: 'var(--bg-surface)', padding: 4, borderRadius: 12, border: '1px solid var(--border-subtle)' }}>
@@ -256,7 +257,7 @@ export default function VoiceOrders() {
                     ))}
                 </div>
 
-                {/* ─── Voice Order Panel ─── */}
+                {/* ——— Voice Order Panel ——— */}
                 {mode === 'voice' && (
                     <>
                         <div className="glass-card" style={{ padding: 32, textAlign: 'center' }}>
@@ -306,11 +307,11 @@ export default function VoiceOrders() {
                                     </div>
                                 )}
                                 {micStatus === 'processing' && (
-                                    <p style={{ fontSize: 14, color: 'var(--primary)', fontWeight: 600 }}>🔄 Transcribing audio with Whisper AI…</p>
+                                    <p style={{ fontSize: 14, color: 'var(--primary)', fontWeight: 600 }}>— Transcribing audio with Whisper AI…</p>
                                 )}
                                 {micStatus === 'error' && micError && (
                                     <div style={{ background: '#fef2f2', border: '1px solid #fecaca', borderRadius: 10, padding: '10px 16px', maxWidth: 380, textAlign: 'left' }}>
-                                        <p style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, margin: 0 }}>⚠ {micError}</p>
+                                        <p style={{ color: '#dc2626', fontSize: 13, fontWeight: 600, margin: 0 }}>— {micError}</p>
                                         <button onClick={() => setMicStatus('idle')} style={{ fontSize: 12, color: '#dc2626', background: 'none', border: 'none', cursor: 'pointer', padding: 0, marginTop: 4, textDecoration: 'underline' }}>Dismiss</button>
                                     </div>
                                 )}
@@ -346,7 +347,7 @@ export default function VoiceOrders() {
                                     className="search-input" style={{ width: '100%', paddingLeft: 16 }} />
                                 <button className="btn-primary" onClick={() => manualText.trim() && parseOrder(manualText)}
                                     disabled={!manualText.trim() || loading} style={{ whiteSpace: 'nowrap' }}>
-                                    Parse →
+                                    Parse —
                                 </button>
                             </div>
 
@@ -382,7 +383,7 @@ export default function VoiceOrders() {
                     </>
                 )}
 
-                {/* ─── Manual Order Panel ─── */}
+                {/* ——— Manual Order Panel ——— */}
                 {mode === 'manual' && (
                     <div className="glass-card" style={{ padding: 24 }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -452,7 +453,7 @@ export default function VoiceOrders() {
                                                         <button onClick={() => removeFromCart(item.item_id)} style={{
                                                             width: 28, height: 28, borderRadius: '50%', border: '1px solid #e2e8f0', background: 'white',
                                                             cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 700, color: 'var(--accent-red)',
-                                                        }}>−</button>
+                                                        }}>—</button>
                                                         <span style={{ width: 32, textAlign: 'center', fontSize: 14, fontWeight: 700, color: 'var(--primary)' }}>{qty}</span>
                                                         <button onClick={() => addToCart(item.item_id)} style={{
                                                             width: 28, height: 28, borderRadius: '50%', border: 'none', background: 'var(--primary)',
@@ -475,7 +476,7 @@ export default function VoiceOrders() {
                 )}
             </div>
 
-            {/* ═══ RIGHT COLUMN — Order Summary ═══ */}
+            {/* ——— RIGHT COLUMN — Order Summary ——— */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
                 {/* Empty state for voice mode */}
                 {mode === 'voice' && !parsedOrder && !confirmedOrder && (
@@ -485,7 +486,7 @@ export default function VoiceOrders() {
                     </div>
                 )}
 
-                {/* ─── Manual Order Cart ─── */}
+                {/* ——— Manual Order Cart ——— */}
                 {mode === 'manual' && !confirmedOrder && (
                     <div className="glass-card" style={{ padding: 24, position: 'sticky', top: 88 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
@@ -510,7 +511,7 @@ export default function VoiceOrders() {
                                             <button onClick={() => removeFromCart(item.item_id)} style={{
                                                 width: 24, height: 24, borderRadius: '50%', border: '1px solid #e2e8f0', background: 'white',
                                                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, color: 'var(--accent-red)',
-                                            }}>−</button>
+                                            }}>—</button>
                                             <span style={{ fontSize: 14, fontWeight: 700, minWidth: 20, textAlign: 'center' }}>{item.qty}</span>
                                             <button onClick={() => addToCart(item.item_id)} style={{
                                                 width: 24, height: 24, borderRadius: '50%', border: 'none', background: 'var(--primary)',
@@ -624,7 +625,7 @@ export default function VoiceOrders() {
                                 <div style={{ border: '2px dashed var(--border-subtle)', borderRadius: 12, padding: 24, background: 'var(--bg-surface)', opacity: 0.7 }}>
                                     <div style={{ textAlign: 'center', marginBottom: 16 }}>
                                         <h4 style={{ fontSize: 14, fontWeight: 700 }}>KITCHEN ORDER TICKET</h4>
-                                        <p style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Order #NEW • {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
+                                        <p style={{ fontSize: 10, color: 'var(--text-tertiary)' }}>Order #NEW &bull; {new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}</p>
                                     </div>
                                     <div style={{ fontFamily: 'monospace', fontSize: 12, display: 'flex', flexDirection: 'column', gap: 4 }}>
                                         {parsedOrder.items.map((item, i) => (
@@ -725,7 +726,7 @@ export default function VoiceOrders() {
                 )}
             </div>
 
-            {/* ── Receipt Print Modal ── */}
+            {/* ━━ Receipt Print Modal ━━ */}
             {showReceipt && confirmedOrder && createPortal(
                 <>
                     <style>{`
@@ -800,3 +801,4 @@ export default function VoiceOrders() {
         </div>
     )
 }
+

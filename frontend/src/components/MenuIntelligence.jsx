@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
+import apiFetch from '../utils/apiFetch'
 
 const STATUS_MAP = {
     Star: { badge: 'badge-star', label: 'Star', icon: 'star' },
@@ -30,7 +31,7 @@ export default function MenuIntelligence() {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        fetch('/menu/analysis').then(r => r.json()).then(d => {
+        apiFetch('/menu/analysis').then(r => r.json()).then(d => {
             setItems(d.items || [])
             setLoading(false)
         })
@@ -51,7 +52,7 @@ export default function MenuIntelligence() {
         else { setSortKey(key); setSortDir('desc') }
     }
 
-    const sortArrow = (key) => sortKey === key ? (sortDir === 'desc' ? ' ↓' : ' ↑') : ''
+    const sortArrow = (key) => sortKey === key ? (sortDir === 'desc' ? ' â†“' : ' â†‘') : ''
 
     if (loading) return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -61,12 +62,12 @@ export default function MenuIntelligence() {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-            {/* ─── Filters & Search ─── */}
+            {/* â”€â”€â”€ Filters & Search â”€â”€â”€ */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', overflowX: 'auto', paddingBottom: 4 }}>
                     {FILTERS.map(f => (
                         <button key={f} className={`filter-pill ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-                            {f === 'All' ? 'All Items' : f === 'Hidden Star' ? '🌟 Hidden Stars' : f === 'Star' ? '⭐ Stars' : f === 'Plowhorse' ? '⚠️ Plowhorses' : '💀 Dogs'}
+                            {f === 'All' ? 'All Items' : f === 'Hidden Star' ? '💎 Hidden Stars' : f === 'Star' ? '⭐ Stars' : f === 'Plowhorse' ? '🐎 Plowhorses' : '🐕 Dogs'}
                         </button>
                     ))}
                 </div>
@@ -81,7 +82,7 @@ export default function MenuIntelligence() {
                 </div>
             </div>
 
-            {/* ─── Table ─── */}
+            {/* â”€â”€â”€ Table â”€â”€â”€ */}
             <div className="glass-card" style={{ overflow: 'hidden', borderRadius: 12 }}>
                 <div style={{ overflowX: 'auto' }}>
                     <table className="data-table">
@@ -146,7 +147,7 @@ export default function MenuIntelligence() {
                 </div>
             </div>
 
-            {/* ─── Insight Cards ─── */}
+            {/* â”€â”€â”€ Insight Cards â”€â”€â”€ */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
                 <div className="insight-card ai">
                     <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
@@ -179,3 +180,4 @@ export default function MenuIntelligence() {
         </div>
     )
 }
+

@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
+import apiFetch from '../utils/apiFetch'
 
 const TIME_FILTERS = ['Today', 'This Week', 'All Time']
 
@@ -64,7 +65,7 @@ function generateReceiptText(order) {
         center(`You saved ₹${savings} on this order!`),
         '',
         dash,
-        center('Payment: UPI (GPay) ✓'),
+        center('Payment: UPI (GPay) ✔'),
         center(`Status: ${order.status === 'confirmed' ? 'PAID' : 'PENDING'}`),
         dash,
         '',
@@ -99,7 +100,7 @@ export default function OrderHistory() {
     const [receiptOrder, setReceiptOrder] = useState(null)
 
     useEffect(() => {
-        fetch('/voice/orders').then(r => r.json()).then(d => {
+        apiFetch('/voice/orders').then(r => r.json()).then(d => {
             const sorted = (d.orders || []).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
             setOrders(sorted)
             setLoading(false)
@@ -259,7 +260,7 @@ export default function OrderHistory() {
                                                     padding: '4px 12px', borderRadius: 999, fontSize: 11, fontWeight: 700,
                                                     background: order.status === 'confirmed' ? 'rgba(16,185,129,0.1)' : 'rgba(59,130,246,0.1)',
                                                     color: order.status === 'confirmed' ? 'var(--accent-green)' : 'var(--accent-blue)',
-                                                }}>{order.status === 'confirmed' ? '✓ Confirmed' : 'KOT Sent'}</span>
+                                                }}>{order.status === 'confirmed' ? '✔ Confirmed' : 'KOT Sent'}</span>
                                             </td>
                                             <td style={{ textAlign: 'center' }} onClick={e => e.stopPropagation()}>
                                                 <div style={{ display: 'flex', gap: 4, justifyContent: 'center' }}>
@@ -314,7 +315,7 @@ export default function OrderHistory() {
                                                                 </div>
                                                             ))}
                                                             {order.upsell_accepted && (
-                                                                <p style={{ fontSize: 12, color: 'var(--primary)', marginTop: 8 }}>💎 Upsell suggestion accepted</p>
+                                                                <p style={{ fontSize: 12, color: 'var(--primary)', marginTop: 8 }}>ðŸ’Ž Upsell suggestion accepted</p>
                                                             )}
                                                             <div style={{ marginTop: 'auto', paddingTop: 12, display: 'flex', gap: 8 }}>
                                                                 <button onClick={() => setReceiptOrder(order)} style={{ color: 'var(--primary)', fontWeight: 700, fontSize: 12, display: 'flex', alignItems: 'center', gap: 4, background: 'var(--primary-dim)', border: 'none', cursor: 'pointer', padding: '8px 16px', borderRadius: 8 }}>
@@ -385,3 +386,4 @@ export default function OrderHistory() {
         </div>
     )
 }
+

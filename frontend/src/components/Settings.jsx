@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { createPortal } from 'react-dom'
+import apiFetch from '../utils/apiFetch'
 
 const CATEGORIES = ['Burgers', 'Pizzas', 'Starters', 'Beverages', 'Desserts', 'Main Course', 'Sides', 'Other']
 
@@ -24,7 +25,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
 
     const fetchItems = useCallback(async () => {
         try {
-            const res = await fetch('/menu/items')
+            const res = await apiFetch('/menu/items')
             const data = await res.json()
             setItems(data.items || [])
         } catch (e) {
@@ -39,7 +40,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
     // Fetch inventory items for recipe dropdown
     const fetchInventory = async () => {
         try {
-            const res = await fetch('/inventory/items')
+            const res = await apiFetch('/inventory/items')
             const data = await res.json()
             setInventoryItems(data.items || [])
         } catch (e) { console.error(e) }
@@ -47,7 +48,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
 
     const fetchRecipe = async (itemId) => {
         try {
-            const res = await fetch(`/recipes/${itemId}`)
+            const res = await apiFetch(`/recipes/${itemId}`)
             const data = await res.json()
             setRecipeIngredients(data.ingredients || [])
         } catch (e) { setRecipeIngredients([]) }
@@ -90,16 +91,16 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
             const body = { name: form.name.trim(), category: form.category, selling_price: +form.selling_price, food_cost: +form.food_cost, is_available: form.is_available }
             let itemId = editItem?.item_id
             if (editItem) {
-                await fetch(`/menu/items/${editItem.item_id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                await apiFetch(`/menu/items/${editItem.item_id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
             } else {
-                const res = await fetch('/menu/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
+                const res = await apiFetch('/menu/items', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) })
                 const data = await res.json()
                 itemId = data.item?.item_id
             }
             // Save recipe
             if (itemId && recipeIngredients.length > 0) {
                 const validIngredients = recipeIngredients.filter(r => r.ingredient_id && r.qty > 0)
-                await fetch(`/recipes/${itemId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(validIngredients) })
+                await apiFetch(`/recipes/${itemId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(validIngredients) })
             }
             showToast(editItem ? `"${form.name}" updated` : `"${form.name}" added to menu`)
             setShowModal(false)
@@ -113,7 +114,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
 
     const toggleAvailability = async (item) => {
         try {
-            await fetch(`/menu/items/${item.item_id}/toggle`, { method: 'PATCH' })
+            await apiFetch(`/menu/items/${item.item_id}/toggle`, { method: 'PATCH' })
             setItems(prev => prev.map(i => i.item_id === item.item_id ? { ...i, is_available: !i.is_available } : i))
         } catch {
             showToast('Toggle failed', false)
@@ -122,7 +123,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
 
     const handleDelete = async (item) => {
         try {
-            await fetch(`/menu/items/${item.item_id}`, { method: 'DELETE' })
+            await apiFetch(`/menu/items/${item.item_id}`, { method: 'DELETE' })
             setItems(prev => prev.filter(i => i.item_id !== item.item_id))
             showToast(`"${item.name}" removed`)
         } catch {
@@ -214,8 +215,8 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
                                         <td style={{ padding: '12px 16px' }}>
                                             <span style={{ padding: '3px 10px', borderRadius: 20, background: '#f1f5f9', fontSize: 12, fontWeight: 600, color: '#475569' }}>{item.category}</span>
                                         </td>
-                                        <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 600, color: '#0f172a' }}>₹{item.selling_price}</td>
-                                        <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748b' }}>₹{item.food_cost}</td>
+                                        <td style={{ padding: '12px 16px', fontSize: 14, fontWeight: 600, color: '#0f172a' }}>â‚¹{item.selling_price}</td>
+                                        <td style={{ padding: '12px 16px', fontSize: 13, color: '#64748b' }}>â‚¹{item.food_cost}</td>
                                         <td style={{ padding: '12px 16px' }}>
                                             <span style={{ fontSize: 13, fontWeight: 700, color: m >= 60 ? '#10B981' : m >= 40 ? '#f97415' : '#ef4444' }}>{m}%</span>
                                         </td>
@@ -291,7 +292,7 @@ function MenuManagement({ cardStyle, inputStyle, labelStyle }) {
                                 </button>
                             </div>
 
-                            {/* ─── Recipe / BOM Section ─── */}
+                            {/* â”€â”€â”€ Recipe / BOM Section â”€â”€â”€ */}
                             <div style={{ borderTop: '1px solid #e5e7eb', paddingTop: 16, marginTop: 8 }}>
                                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
                                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -545,7 +546,7 @@ export default function Settings() {
             <div style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 24 }}>
                     <div style={{ width: 56, height: 56, borderRadius: 14, background: '#f97415', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white' }}><span className="material-symbols-outlined" style={{ fontSize: 28 }}>restaurant_menu</span></div>
-                    <div><h3 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>Petpooja Copilot</h3><div style={{ fontSize: 13, color: '#94a3b8' }}>v1.0.0 — Hackathon Build 2025</div></div>
+                    <div><h3 style={{ fontSize: 20, fontWeight: 700, color: '#0f172a' }}>Petpooja Copilot</h3><div style={{ fontSize: 13, color: '#94a3b8' }}>v1.0.0 â€” Hackathon Build 2025</div></div>
                 </div>
                 <p style={{ fontSize: 14, lineHeight: 1.7, color: '#64748b', marginBottom: 24 }}>AI-powered restaurant intelligence platform combining revenue optimization, menu engineering, and voice ordering.</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
@@ -562,7 +563,7 @@ export default function Settings() {
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                     <span style={{ width: 10, height: 10, borderRadius: '50%', background: '#10B981' }} />
                     <span style={{ fontSize: 14, fontWeight: 600, color: '#10B981' }}>Backend Connected</span>
-                    <span style={{ fontSize: 12, color: '#94a3b8' }}>— http://localhost:8000</span>
+                    <span style={{ fontSize: 12, color: '#94a3b8' }}>â€” http://localhost:8000</span>
                 </div>
             </div>
         </div>
@@ -605,3 +606,4 @@ export default function Settings() {
         </div>
     )
 }
+

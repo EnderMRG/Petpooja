@@ -4,8 +4,9 @@ import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
     ResponsiveContainer, Cell, PieChart, Pie
 } from 'recharts'
+import apiFetch from '../utils/apiFetch'
 
-/* ─── Animated counter hook ─── */
+/* â”€â”€â”€ Animated counter hook â”€â”€â”€ */
 function useCountUp(target, duration = 1200) {
     const [val, setVal] = useState(0)
     const ref = useRef()
@@ -33,8 +34,8 @@ export default function Dashboard({ onNavigate }) {
 
     useEffect(() => {
         Promise.all([
-            fetch('/menu/analysis').then(r => r.json()),
-            fetch('/menu/combos').then(r => r.json()),
+            apiFetch('/menu/analysis').then(r => r.json()),
+            apiFetch('/menu/combos').then(r => r.json()),
         ]).then(([analysis, comboData]) => {
             setData(analysis.items || [])
             setCombos(comboData.combos || [])
@@ -93,7 +94,7 @@ export default function Dashboard({ onNavigate }) {
 
     return (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 32 }}>
-            {/* ─── Stat Cards ─── */}
+            {/* â”€â”€â”€ Stat Cards â”€â”€â”€ */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
                 {statCards.map(card => (
                     <div key={card.label} className="glass-card stat-card"
@@ -107,12 +108,12 @@ export default function Dashboard({ onNavigate }) {
                         </div>
                         <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-tertiary)', marginBottom: 4 }}>{card.label}</p>
                         <h3 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{card.value}</h3>
-                        {card.clickData && <p style={{ fontSize: 11, color: 'var(--primary)', marginTop: 8, fontWeight: 600 }}>Click to view details →</p>}
+                        {card.clickData && <p style={{ fontSize: 11, color: 'var(--primary)', marginTop: 8, fontWeight: 600 }}>Click to view details â†’</p>}
                     </div>
                 ))}
             </div>
 
-            {/* ─── Detail Modal (portal) ─── */}
+            {/* â”€â”€â”€ Detail Modal (portal) â”€â”€â”€ */}
             {modalData && createPortal(
                 <div style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.5)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                     onClick={e => e.target === e.currentTarget && setModalData(null)}>
@@ -152,9 +153,9 @@ export default function Dashboard({ onNavigate }) {
                                             <td style={{ padding: '12px 16px', color: 'var(--text-secondary)' }}>
                                                 <span style={{ background: 'var(--bg-elevated)', padding: '3px 8px', borderRadius: 6, fontSize: 11, fontWeight: 600 }}>{item.category}</span>
                                             </td>
-                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>₹{item.selling_price}</td>
-                                            <td style={{ padding: '12px 16px', textAlign: 'right', color: 'var(--text-secondary)' }}>₹{item.food_cost}</td>
-                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--accent-green)' }}>₹{item.margin}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 600, color: 'var(--text-primary)' }}>â‚¹{item.selling_price}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', color: 'var(--text-secondary)' }}>â‚¹{item.food_cost}</td>
+                                            <td style={{ padding: '12px 16px', textAlign: 'right', fontWeight: 700, color: 'var(--accent-green)' }}>â‚¹{item.margin}</td>
                                             <td style={{ padding: '12px 16px', textAlign: 'right' }}>
                                                 <span style={{
                                                     padding: '3px 8px', borderRadius: 6, fontSize: 12, fontWeight: 700,
@@ -171,7 +172,7 @@ export default function Dashboard({ onNavigate }) {
                 </div>
                 , document.body)}
 
-            {/* ─── Charts Row ─── */}
+            {/* â”€â”€â”€ Charts Row â”€â”€â”€ */}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 24 }}>
                 {/* Bar Chart */}
                 <div className="glass-card" style={{ padding: 24 }}>
@@ -239,7 +240,7 @@ export default function Dashboard({ onNavigate }) {
                 </div>
             </div>
 
-            {/* ─── Top Combo Suggestions ─── */}
+            {/* â”€â”€â”€ Top Combo Suggestions â”€â”€â”€ */}
             <div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
                     <h4 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>Today's Top Combo Suggestions</h4>
@@ -278,3 +279,4 @@ export default function Dashboard({ onNavigate }) {
         </div>
     )
 }
+

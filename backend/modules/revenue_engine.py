@@ -1,31 +1,28 @@
 """
 Module 1 — Revenue Intelligence & Menu Optimization Engine
 """
-import json
 import os
 import pandas as pd
 from mlxtend.frequent_patterns import apriori, association_rules
 from mlxtend.preprocessing import TransactionEncoder
 
-DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data")
+from modules.db import load_menu as _db_load_menu, load_transactions as _db_load_transactions
 
 
-def _load_menu() -> list[dict]:
-    with open(os.path.join(DATA_DIR, "menu.json")) as f:
-        return json.load(f)
+def _load_menu(restaurant_id: str = "demo") -> list[dict]:
+    return _db_load_menu(restaurant_id)
 
 
-def _load_transactions() -> list[dict]:
-    with open(os.path.join(DATA_DIR, "transactions.json")) as f:
-        return json.load(f)
+def _load_transactions(restaurant_id: str = "demo") -> list[dict]:
+    return _db_load_transactions(restaurant_id)
 
 
 # ─────────────────────────────────────────────
 # 1. Contribution Margin Analysis
 # ─────────────────────────────────────────────
-def contribution_margin() -> list[dict]:
+def contribution_margin(restaurant_id: str = "demo") -> list[dict]:
     """Calculate (selling_price - food_cost) for each item, ranked."""
-    menu = _load_menu()
+    menu = _load_menu(restaurant_id)
     results = []
     for item in menu:
         margin = item["selling_price"] - item["food_cost"]
@@ -46,15 +43,15 @@ def contribution_margin() -> list[dict]:
 # ─────────────────────────────────────────────
 # 2. Sales Velocity & Popularity Scoring
 # ─────────────────────────────────────────────
-def sales_velocity() -> list[dict]:
+def sales_velocity(restaurant_id: str = "demo") -> list[dict]:
     """
     Count order frequency from transactions → classify:
       Fast Mover  : top 25 %
       Slow Seller : bottom 25 %
       Moderate    : middle 50 %
     """
-    menu = _load_menu()
-    transactions = _load_transactions()
+    menu = _load_menu(restaurant_id)
+    transactions = _load_transactions(restaurant_id)
 
     # Count how many orders contain each item
     order_count: dict[str, int] = {}
@@ -99,7 +96,7 @@ def sales_velocity() -> list[dict]:
 # ─────────────────────────────────────────────
 # 3. Menu Matrix Classification
 # ─────────────────────────────────────────────
-def menu_matrix() -> list[dict]:
+def menu_matrix(restaurant_id: str = "demo") -> list[dict]:
     """
     Classify every item:
       Star        : high margin + high popularity
@@ -107,8 +104,8 @@ def menu_matrix() -> list[dict]:
       Plowhorse   : low margin  + high popularity
       Dog         : low margin  + low popularity
     """
-    margins = contribution_margin()
-    velocities = sales_velocity()
+    margins = contribution_margin(restaurant_id)
+    velocities = sales_velocity(restaurant_id)
 
     margin_map = {m["item_id"]: m for m in margins}
     velocity_map = {v["item_id"]: v for v in velocities}
@@ -155,13 +152,13 @@ def menu_matrix() -> list[dict]:
 # ─────────────────────────────────────────────
 # 4. Combo / Bundle Recommendation Engine
 # ─────────────────────────────────────────────
-def combo_recommendations(min_support: float = 0.02, min_confidence: float = 0.3) -> list[dict]:
+def combo_recommendations(restaurant_id: str = "demo", min_support: float = 0.02, min_confidence: float = 0.3) -> list[dict]:
     """
     Apriori association rule mining on transaction baskets.
     Prioritize combos that include Hidden Star items.
     """
-    transactions = _load_transactions()
-    menu = _load_menu()
+    transactions = _load_transactions(restaurant_id)
+    menu = _load_menu(restaurant_id)
     name_map = {item["item_id"]: item["name"] for item in menu}
 
     # Build list of baskets (each basket = set of item_ids)
@@ -185,7 +182,7 @@ def combo_recommendations(min_support: float = 0.02, min_confidence: float = 0.3
         return []
 
     # Get Hidden Star item IDs for prioritization
-    matrix = menu_matrix()
+    matrix = menu_matrix(restaurant_id)
     hidden_star_ids = {item["item_id"] for item in matrix if item["classification"] == "Hidden Star"}
 
     combos = []
@@ -219,14 +216,11 @@ def combo_recommendations(min_support: float = 0.02, min_confidence: float = 0.3
 # ─────────────────────────────────────────────
 # 5. Price Optimization Suggestions
 # ─────────────────────────────────────────────
-def price_suggestions() -> list[dict]:
+def price_suggestions(restaurant_id: str = "demo") -> list[dict]:
     """
-    Rule-based pricing recommendations:
-      - Plowhorse (high volume, low margin) → suggest price increase
-      - Hidden Star (high margin, low orders) → suggest promo / combo deal
-      - Dog → suggest removal or heavy discount
+    Rule-based pricing recommendations.
     """
-    matrix = menu_matrix()
+    matrix = menu_matrix(restaurant_id)
     suggestions = []
 
     for item in matrix:
@@ -281,11 +275,11 @@ def price_suggestions() -> list[dict]:
 # ─────────────────────────────────────────────
 # Convenience: hidden stars & risk items
 # ─────────────────────────────────────────────
-def hidden_stars() -> list[dict]:
+def hidden_stars(restaurant_id: str = "demo") -> list[dict]:
     """Return only Hidden Star items."""
-    return [item for item in menu_matrix() if item["classification"] == "Hidden Star"]
+    return [item for item in menu_matrix(restaurant_id) if item["classification"] == "Hidden Star"]
 
 
-def risk_items() -> list[dict]:
+def risk_items(restaurant_id: str = "demo") -> list[dict]:
     """Return Plowhorse items (high volume, low margin)."""
-    return [item for item in menu_matrix() if item["classification"] == "Plowhorse"]
+    return [item for item in menu_matrix(restaurant_id) if item["classification"] == "Plowhorse"]
