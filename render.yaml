@@ -14,13 +14,12 @@ services:
   # 2. Frontend App (Vercel)
   # For the frontend, deploying directly to Vercel (free tier) is better than using Render's free tier for Static Sites,
   # but here is the Render config if you want everything in Render Free Tier:
-  # Wait, since it's a Static Site, the "type" must be "static" (not "web")
-  - type: static
+  - type: web
     name: petpooja-frontend
     env: static # Use Render's free Static Site tier for React apps instead of NodeJS
     region: singapore
     buildCommand: "cd frontend && npm install && npm run build"
-    publishPath: "frontend/dist" # Where Vite outputs the HTML
+    staticPublishPath: "frontend/dist" # Where Vite outputs the HTML
     envVars:
       - key: VITE_API_BASE_URL
         value: "https://petpooja-backend.onrender.com"
