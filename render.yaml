@@ -2,14 +2,10 @@ services:
   # 1. Backend API (Python) - Free Tier
   - type: web
     name: petpooja-backend
-    env: python
+    env: docker
     region: singapore
     plan: free # Explicitly set to free tier
-    buildCommand: "./backend/setup.sh"
-    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
-    envVars:
-      - key: PYTHON_VERSION
-        value: 3.12.0
+    dockerfilePath: "./Dockerfile"
 
   # 2. Frontend App (Vercel)
   # For the frontend, deploying directly to Vercel (free tier) is better than using Render's free tier for Static Sites,
