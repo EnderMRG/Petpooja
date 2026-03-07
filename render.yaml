@@ -17,4 +17,4 @@ services:
     staticPublishPath: "frontend/dist" # Where Vite outputs the HTML
     envVars:
       - key: VITE_API_BASE_URL
-        value: "https://petpooja-backend.onrender.com"
+        value: "https://petpooja-backend-y1te.onrender.com"
