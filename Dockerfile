@@ -10,6 +10,7 @@ WORKDIR /app
 COPY backend/requirements.txt ./backend/
 
 # Install python packages
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel
 RUN pip install --no-cache-dir -r backend/requirements.txt
 
 # Copy the entire backend directory
