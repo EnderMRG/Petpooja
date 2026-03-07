@@ -1,25 +1,26 @@
 services:
-  # 1. Backend API (Python)
+  # 1. Backend API (Python) - Free Tier
   - type: web
     name: petpooja-backend
     env: python
     region: singapore
+    plan: free # Explicitly set to free tier
     buildCommand: "./backend/setup.sh"
     startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
     envVars:
       - key: PYTHON_VERSION
         value: 3.12.0
 
-  # 2. Frontend App (React/Vite)
+  # 2. Frontend App (Vercel)
+  # For the frontend, deploying directly to Vercel (free tier) is better than using Render's free tier for Static Sites,
+  # but here is the Render config if you want everything in Render Free Tier:
   - type: web
     name: petpooja-frontend
-    env: node
+    env: static # Use Render's free Static Site tier for React apps instead of NodeJS
     region: singapore
+    plan: free
     buildCommand: "cd frontend && npm install && npm run build"
-    startCommand: "npm install -g serve && serve -s frontend/dist -l $PORT"
+    publishPath: "frontend/dist" # Where Vite outputs the HTML
     envVars:
-      - key: NODE_VERSION
-        value: 20
       - key: VITE_API_BASE_URL
-        # This dynamically uses the backend URL provided by Render during build
         value: "https://petpooja-backend.onrender.com"
