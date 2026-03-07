@@ -1,0 +1,25 @@
+services:
+  # 1. Backend API (Python)
+  - type: web
+    name: petpooja-backend
+    env: python
+    region: singapore
+    buildCommand: "./backend/setup.sh"
+    startCommand: "cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.0
+
+  # 2. Frontend App (React/Vite)
+  - type: web
+    name: petpooja-frontend
+    env: node
+    region: singapore
+    buildCommand: "cd frontend && npm install && npm run build"
+    startCommand: "npm install -g serve && serve -s frontend/dist -l $PORT"
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+      - key: VITE_API_BASE_URL
+        # This dynamically uses the backend URL provided by Render during build
+        value: "https://petpooja-backend.onrender.com"

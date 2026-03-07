@@ -108,7 +108,7 @@ export default function Dashboard({ onNavigate }) {
                         </div>
                         <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-tertiary)', marginBottom: 4 }}>{card.label}</p>
                         <h3 style={{ fontSize: 30, fontWeight: 700, color: 'var(--text-primary)', lineHeight: 1 }}>{card.value}</h3>
-                        {card.clickData && <p style={{ fontSize: 11, color: 'var(--primary)', marginTop: 8, fontWeight: 600 }}>Click to view details â†’</p>}
+                        {card.clickData && <p style={{ fontSize: 11, color: 'var(--primary)', marginTop: 8, fontWeight: 600 }}>Click to view details &rarr;</p>}
                     </div>
                 ))}
             </div>
