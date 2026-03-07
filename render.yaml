@@ -17,7 +17,6 @@ services:
   - type: web
     name: petpooja-frontend
     env: static # Use Render's free Static Site tier for React apps instead of NodeJS
-    region: singapore
     buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: "frontend/dist" # Where Vite outputs the HTML
     envVars:
